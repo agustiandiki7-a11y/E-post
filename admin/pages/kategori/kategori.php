@@ -1,4 +1,3 @@
-  <!-- MAIN CONTENT -->
   <main id="content" class="content py-10">
       <div class="container-fluid">
           <div class="row">
@@ -9,7 +8,7 @@
                           <p class="mb-0">Manage your product inventory</p>
                       </div>
                       <div>
-                          <a href="index.php?page=tambahKategori" class="btn btn-primary">Add Product</a>
+                          <a href="index.php?page=tambah-kategori" class="btn btn-primary">Add Product</a>
                       </div>
                   </div>
               </div>
@@ -187,10 +186,7 @@
                           </tfoot>
                       </table>
                   </div>
-
-
               </div>
-
           </div>
           <div class="row">
               <div class="col-12">
@@ -198,7 +194,6 @@
                       <p class="mb-0">Copyright © 2026 InApp Inventory Dashboard. Developed by <a href="https://codescandy.com/" target="_blank" class="text-primary">CodesCandy</a> • Distributed by <a href="https://themewagon.com/" target="_blank" class="text-primary">ThemeWagon</a> </p>
                   </footer>
               </div>
-
           </div>
       </div>
   </main>

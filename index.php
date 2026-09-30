@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- head -->
+<!-- Head Section -->
 <?php include 'peminjam/partials/head.php' ?>
-<!-- head -->
+<!-- Head Section -->
 
 <body>
 
@@ -40,11 +40,11 @@
     <!-- Services End -->
 
     <!-- Car categories Start -->
-    <?php include 'peminjam/pages/car_categori.php' ?>
+    <?php include 'peminjam/pages/categories.php' ?>
     <!-- Car categories End -->
 
     <!-- Car Steps Start -->
-    <?php include 'peminjam/pages/car_steps.php' ?>
+    <?php include 'peminjam/pages/steps.php' ?>
     <!-- Car Steps End -->
 
     <!-- Blog Start -->
@@ -63,16 +63,18 @@
     <?php include 'peminjam/pages/testimonial.php' ?>
     <!-- Testimonial End -->
 
-    <!-- footer/copyrighit -->
+    <!-- Footer -->
     <?php include 'peminjam/components/footer.php' ?>
-    <!-- footer/copyrighit -->
+    <!-- Footer -->
+
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
 
-    <!-- js -->
+    <!-- Javascript -->
     <?php include 'peminjam/partials/script.php' ?>
-    <!-- js -->
+    <!-- Javascript -->
 </body>
+
 </html>

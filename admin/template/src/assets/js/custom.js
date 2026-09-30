@@ -1,6 +1,2 @@
-
-
-
-
-import "./chart.js";
-import "./sidebar.js"
+import "chart.js";
+import "sidebar.js"

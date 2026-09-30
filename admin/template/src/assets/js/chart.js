@@ -1,7 +1,3 @@
-
-
-
-
 import ApexCharts from 'apexcharts';
 
 document.addEventListener('DOMContentLoaded', () => {
