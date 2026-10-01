@@ -8,7 +8,7 @@
                           <p class="mb-0">Manage your product inventory</p>
                       </div>
                       <div>
-                          <a href="index.php?page=tambah-kategori" class="btn btn-primary">Add Product</a>
+                          <a href="index.php?page=tambahKategori" class="btn btn-primary">Add Product</a>
                       </div>
                   </div>
               </div>
