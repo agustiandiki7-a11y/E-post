@@ -7,4 +7,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="template/src/assets/images/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="template/src/assets/images/favicon_io/site.webmanifest">
     <link rel="stylesheet" crossorigin href="template/src/assets/css/main.css">
+    <!-- Font ikon Tabler: main.css menunjuk ke /inapp/assets/... yang tidak ada, jadi dimuat dari CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css">
 </head>

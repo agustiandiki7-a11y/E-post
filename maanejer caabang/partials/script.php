@@ -1,12 +1,4 @@
-<!-- JavaScript Libraries -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="peminjam/template/lib/wow/wow.min.js"></script>
-<script src="peminjam/template/lib/easing/easing.min.js"></script>
-<script src="peminjam/template/lib/waypoints/waypoints.min.js"></script>
-<script src="peminjam/template/lib/counterup/counterup.min.js"></script>
-<script src="peminjam/template/lib/owlcarousel/owl.carousel.min.js"></script>
-
-
-<!-- Template Javascript -->
-<script src="peminjam/template/js/main.js"></script>
+<script src="template/src/assets/js/chart.js" type="module"></script>
+<script src="template/src/assets/js/custom.js" type="module"></script>
+<script src="template/src/assets/js/sidebar.js" type="module"></script>
+<script src="template/src/assets/js/main.js" type="module"></script>
