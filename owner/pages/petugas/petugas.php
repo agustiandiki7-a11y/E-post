@@ -1,26 +1,23 @@
 <?php
-// Halaman USER (admin / kasir / manajer)
+// Halaman PETUGAS (kasir / manajer). Akun admin tidak ditampilkan.
 require_once 'function/petugas.php';
 $petugas = new Petugas();
 $pesan = '';
 
 if (isset($_POST['hapus_id'])) {
-    if ((int) $_POST['hapus_id'] === (int) $_SESSION['user']['id']) {
-        $pesan = 'Akun yang sedang dipakai login tidak bisa dihapus.';
-    } elseif ($petugas->hapus((int) $_POST['hapus_id'])) {
+    if ($petugas->hapus((int) $_POST['hapus_id'])) {
         redirect('petugas');
-    } else {
-        $pesan = 'User tidak bisa dihapus karena sudah punya transaksi.';
     }
+    $pesan = 'User tidak bisa dihapus karena sudah punya transaksi.';
 }
 
 $role = isset($_GET['role']) ? $_GET['role'] : '';
-if (!in_array($role, ['admin', 'kasir', 'manajer'])) {
+if (!in_array($role, ['kasir', 'manajer'])) {
     $role = '';
 }
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $data = $petugas->semua($role, $cari);
-$warna = ['admin' => 'bg-dark', 'kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
+$warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
 ?>
 <main id="content" class="content py-10">
     <div class="container-fluid">
@@ -29,7 +26,7 @@ $warna = ['admin' => 'bg-dark', 'kasir' => 'bg-primary', 'manajer' => 'bg-info t
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h1 class="fs-3 mb-1">Master User</h1>
-                        <p class="mb-0">Kelola akun owner, kasir, dan manajer cabang</p>
+                        <p class="mb-0">Kelola akun kasir dan manajer cabang</p>
                     </div>
                     <div>
                         <a href="index.php?page=tambahPetugas" class="btn btn-primary">Tambah User</a>
@@ -45,7 +42,6 @@ $warna = ['admin' => 'bg-dark', 'kasir' => 'bg-primary', 'manajer' => 'bg-info t
                     <input type="text" name="cari" value="<?= e($cari) ?>" class="form-control" placeholder="Cari nama / email..." style="max-width: 250px;">
                     <select name="role" class="form-select" style="max-width: 180px;">
                         <option value="">Semua role</option>
-                        <option value="admin" <?= $role == 'admin' ? 'selected' : '' ?>>Admin / Owner</option>
                         <option value="kasir" <?= $role == 'kasir' ? 'selected' : '' ?>>Kasir</option>
                         <option value="manajer" <?= $role == 'manajer' ? 'selected' : '' ?>>Manajer</option>
                     </select>
@@ -73,7 +69,7 @@ $warna = ['admin' => 'bg-dark', 'kasir' => 'bg-primary', 'manajer' => 'bg-info t
                                     <td class="fw-semibold"><?= e($row['nama']) ?></td>
                                     <td><?= e($row['email']) ?></td>
                                     <td><span class="badge <?= $warna[$row['role']] ?>"><?= e(ucfirst($row['role'])) ?></span></td>
-                                    <td><?= $row['nama_cabang'] ? e($row['nama_cabang']) : '<span class="text-secondary">Semua cabang</span>' ?></td>
+                                    <td><?= e($row['nama_cabang']) ?></td>
                                     <td>
                                         <a href="index.php?page=updatePetugas&id=<?= (int) $row['id'] ?>"><i class="ti ti-edit"></i></a>
                                         <form method="post" class="d-inline" onsubmit="return confirm('Hapus user ini?')">

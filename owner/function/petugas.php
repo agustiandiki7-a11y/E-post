@@ -1,5 +1,6 @@
 <?php
-// PETUGAS = master USER: admin / kasir / manajer  (tabel: users)
+// PETUGAS = master USER kasir & manajer  (tabel: users)
+// Akun admin/owner TIDAK ditampilkan di sini dan tidak bisa diubah/dihapus dari halaman ini.
 require_once 'database/connection.php';
 
 class Petugas
@@ -20,7 +21,9 @@ class Petugas
             "SELECT u.*, b.nama_cabang
              FROM users u
              LEFT JOIN branches b ON b.id = u.branch_id
-             WHERE (? = '' OR u.role = ?) AND (u.nama LIKE ? OR u.email LIKE ?)
+             WHERE u.role <> 'admin'
+               AND (? = '' OR u.role = ?)
+               AND (u.nama LIKE ? OR u.email LIKE ?)
              ORDER BY u.id ASC"
         );
         $stmt->bind_param('ssss', $role, $role, $like, $like);
@@ -30,28 +33,43 @@ class Petugas
 
     public function cari($id)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ? AND role <> 'admin'");
         $stmt->bind_param('i', $id);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
 
-    private function cabangUntuk($role, $branch_id)
+    // Validasi umum: role hanya kasir/manajer, cabang wajib dipilih
+    private function valid($role, $branch_id)
     {
-        // admin tidak terikat cabang
-        if ($role === 'admin' || !$branch_id) {
-            return null;
+        if (!in_array($role, ['kasir', 'manajer'], true)) {
+            $this->error = 'Role harus kasir atau manajer.';
+            return false;
         }
-        return (int) $branch_id;
+        if ((int) $branch_id < 1) {
+            $this->error = 'Kasir dan manajer wajib memilih cabang.';
+            return false;
+        }
+        return true;
+    }
+
+    private function pesanDb(mysqli_sql_exception $ex)
+    {
+        if ($ex->getCode() === 1062) {
+            return 'Email sudah dipakai user lain.';
+        }
+        if ($ex->getCode() === 1452) {
+            return 'Cabang yang dipilih tidak valid.';
+        }
+        return 'Terjadi kesalahan database.';
     }
 
     public function tambah($nama, $email, $password, $role, $branch_id)
     {
-        $branch_id = $this->cabangUntuk($role, $branch_id);
-        if ($role !== 'admin' && $branch_id === null) {
-            $this->error = 'Kasir dan manajer wajib memilih cabang.';
+        if (!$this->valid($role, $branch_id)) {
             return false;
         }
+        $branch_id = (int) $branch_id;
         $hash = password_hash($password, PASSWORD_DEFAULT);
         try {
             $stmt = $this->conn->prepare(
@@ -60,7 +78,7 @@ class Petugas
             $stmt->bind_param('ssssi', $nama, $email, $hash, $role, $branch_id);
             return $stmt->execute();
         } catch (mysqli_sql_exception $ex) {
-            $this->error = 'Email sudah dipakai user lain.';
+            $this->error = $this->pesanDb($ex);
             return false;
         }
     }
@@ -68,27 +86,28 @@ class Petugas
     // $password kosong = password lama tidak diubah
     public function ubah($id, $nama, $email, $password, $role, $branch_id)
     {
-        $branch_id = $this->cabangUntuk($role, $branch_id);
-        if ($role !== 'admin' && $branch_id === null) {
-            $this->error = 'Kasir dan manajer wajib memilih cabang.';
+        if (!$this->valid($role, $branch_id)) {
             return false;
         }
+        $branch_id = (int) $branch_id;
         try {
             if ($password !== '') {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $this->conn->prepare(
-                    "UPDATE users SET nama = ?, email = ?, password = ?, role = ?, branch_id = ? WHERE id = ?"
+                    "UPDATE users SET nama = ?, email = ?, password = ?, role = ?, branch_id = ?
+                     WHERE id = ? AND role <> 'admin'"
                 );
                 $stmt->bind_param('ssssii', $nama, $email, $hash, $role, $branch_id, $id);
             } else {
                 $stmt = $this->conn->prepare(
-                    "UPDATE users SET nama = ?, email = ?, role = ?, branch_id = ? WHERE id = ?"
+                    "UPDATE users SET nama = ?, email = ?, role = ?, branch_id = ?
+                     WHERE id = ? AND role <> 'admin'"
                 );
                 $stmt->bind_param('sssii', $nama, $email, $role, $branch_id, $id);
             }
             return $stmt->execute();
         } catch (mysqli_sql_exception $ex) {
-            $this->error = 'Email sudah dipakai user lain.';
+            $this->error = $this->pesanDb($ex);
             return false;
         }
     }
@@ -96,11 +115,12 @@ class Petugas
     public function hapus($id)
     {
         try {
-            $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+            $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ? AND role <> 'admin'");
             $stmt->bind_param('i', $id);
-            return $stmt->execute();
+            $stmt->execute();
+            return $stmt->affected_rows > 0;
         } catch (mysqli_sql_exception $ex) {
-            // gagal karena user sudah punya transaksi
+            // gagal karena petugas sudah punya transaksi
             return false;
         }
     }

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../login/shared.php'; ?>
 <nav id="topbar" class="navbar bg-white border-bottom fixed-top topbar px-3">
     <button id="toggleBtn" class="d-none d-lg-inline-flex btn btn-light btn-icon btn-sm ">
         <i class="ti ti-layout-sidebar-left-expand"></i>
@@ -69,15 +70,16 @@
             <!-- Dropdown -->
             <li class="ms-3 dropdown">
                 <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="template/src/assets/images/avatar/avatar-1.jpg" alt="" class="avatar avatar-sm rounded-circle" />
+                    <?= eposAvatar($_SESSION['user']['nama'], $_SESSION['user']['role'], 36) ?>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end p-0" style="min-width: 200px;">
                     <div>
                         <div class="d-flex gap-3 align-items-center border-dashed border-bottom px-3 py-3">
-                            <img src="template/src/assets/images/avatar/avatar-1.jpg" alt="" class="avatar avatar-md rounded-circle" />
+                            <?= eposAvatar($_SESSION['user']['nama'], $_SESSION['user']['role'], 44) ?>
                             <div>
                                 <h4 class="mb-0 small"><?= e($_SESSION['user']['nama']) ?></h4>
-                                <p class="mb-0  small"><?= e($_SESSION['user']['email']) ?> &middot; Owner</p>
+                                <p class="mb-0 small"><?= e($_SESSION['user']['email']) ?></p>
+<span class="badge bg-primary-subtle text-primary mt-1"><?= e(eposRoleLabel($_SESSION['user']['role'])) ?></span>
                             </div>
                         </div>
                         <div class="p-3 d-flex flex-column gap-1 small lh-lg">

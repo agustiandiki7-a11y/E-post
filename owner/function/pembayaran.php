@@ -84,7 +84,7 @@ class Pembayaran
         $r = $this->conn->query(
             "SELECT (SELECT COUNT(*) FROM branches) AS cabang,
                     (SELECT COUNT(*) FROM products) AS produk,
-                    (SELECT COUNT(*) FROM users)    AS user"
+                    (SELECT COUNT(*) FROM users WHERE role <> 'admin') AS user"
         );
         return $r->fetch_assoc();
     }

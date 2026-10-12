@@ -10,7 +10,7 @@ if (!$row) {
 }
 $pesan = '';
 if (isset($_POST['nama'])) {
-    $role = in_array($_POST['role'], ['admin', 'kasir', 'manajer']) ? $_POST['role'] : 'kasir';
+    $role = in_array($_POST['role'], ['kasir', 'manajer']) ? $_POST['role'] : 'kasir';
     $result = $petugas->ubah($id, trim($_POST['nama']), trim($_POST['email']), $_POST['password'], $role, $_POST['branch_id']);
     if ($result) {
         redirect('petugas');
@@ -58,15 +58,14 @@ if (isset($_POST['nama'])) {
                                 <div class="col-md-6 mb-3">
                                     <label for="role" class="form-label">Role</label>
                                     <select class="form-select" name="role" id="role" required>
-                                        <option value="admin" <?= $row['role'] == 'admin' ? 'selected' : '' ?>>Admin / Owner</option>
                                         <option value="kasir" <?= $row['role'] == 'kasir' ? 'selected' : '' ?>>Kasir</option>
                                         <option value="manajer" <?= $row['role'] == 'manajer' ? 'selected' : '' ?>>Manajer Cabang</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="branch_id" class="form-label">Cabang (kosongkan untuk Admin)</label>
-                                    <select class="form-select" name="branch_id" id="branch_id">
-                                        <option value="">-- Tidak terikat cabang --</option>
+                                    <label for="branch_id" class="form-label">Cabang</label>
+                                    <select class="form-select" name="branch_id" id="branch_id" required>
+                                        <option value="">-- Pilih cabang --</option>
                                         <?php foreach ($cabang as $c) { ?>
                                             <option value="<?= (int) $c['id'] ?>" <?= $row['branch_id'] == $c['id'] && $row['branch_id'] !== '' ? 'selected' : '' ?>><?= e($c['nama_cabang']) ?></option>
                                         <?php } ?>
