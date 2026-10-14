@@ -31,6 +31,7 @@ if ($page === 'baru' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipe = (isset($_POST['diskon_tipe']) && $_POST['diskon_tipe'] === 'persen') ? 'persen' : 'rupiah';
     $nilai = isset($_POST['diskon_nilai']) ? $_POST['diskon_nilai'] : 0;
     $id = $ksr->simpan($items, $tipe, $nilai);
+    if ($id) { toastFlash('success', 'Transaksi berhasil disimpan.'); }
     echo json_encode($id ? ['ok' => true, 'id' => $id] : ['ok' => false, 'msg' => $ksr->error]);
     exit;
 }

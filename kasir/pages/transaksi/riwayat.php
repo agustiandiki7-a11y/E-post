@@ -1,16 +1,13 @@
 <?php
 // RIWAYAT TRANSAKSI - hanya milik kasir yang login
 $hariIni = date('Y-m-d');
-$dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', $hariIni);
+$dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-d', strtotime('-6 days')));
 $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', $hariIni);
 if ($dari > $sampai) {
     $tmp = $dari; $dari = $sampai; $sampai = $tmp;
 }
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $rows = $ksr->riwayat($dari, $sampai, $cari);
-
-$flash = isset($_SESSION['flash']) ? $_SESSION['flash'] : null;
-unset($_SESSION['flash']);
 
 $total = 0;
 foreach ($rows as $r) {
@@ -19,10 +16,6 @@ foreach ($rows as $r) {
     }
 }
 ?>
-<?php if ($flash) { ?>
-    <div class="alert alert-<?= e($flash[0]) ?>"><?= e($flash[1]) ?></div>
-<?php } ?>
-
 <div class="card mb-4">
     <div class="card-body">
         <form method="get" class="row g-2 align-items-end">

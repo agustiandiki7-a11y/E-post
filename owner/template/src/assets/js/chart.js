@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
       ],
-      colors: ['#f7a085', '#E66239'],
+      colors: ['#908bf1', '#4942DD'],
       chart: {
         type: 'bar',
         height: 350,
@@ -113,7 +113,7 @@ chart.render();
         height: 200,
         type: 'radialBar',
       },
-      colors: ['#5BE49B', '#E66239'],
+      colors: ['#5BE49B', '#4942DD'],
       plotOptions: {
         radialBar: {
           dataLabels: {
@@ -169,7 +169,7 @@ chart.render();
         gradient: {
           shade: 'dark',
           type: 'vertical',
-          gradientToColors: ['#007867', '#FFD666', '#FFAC82'],
+          gradientToColors: ['#007867', '#FFD666', '#8E88F9'],
           stops: [0, 100],
         },
       },
@@ -201,7 +201,7 @@ chart.render();
           show: false,
         },
       },
-      colors: ['#E66239', '#198754'],
+      colors: ['#4942DD', '#198754'],
       stroke: { width: [3, 2.5], curve: 'smooth' },
       markers: { size: 4, hover: { sizeOffset: 2 } },
       series: [

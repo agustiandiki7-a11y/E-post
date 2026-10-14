@@ -37489,7 +37489,7 @@ rect.legend-mouseover-inactive,
                   "#03A9F4",
                   "#4CAF50",
                   "#F9CE1D",
-                  "#FF9800",
+                  "#180DF2",
                 ],
                 palette3: [
                   "#33B2DF",
@@ -37514,7 +37514,7 @@ rect.legend-mouseover-inactive,
                 ],
                 palette6: [
                   "#449DD1",
-                  "#F86624",
+                  "#382FED",
                   "#EA3546",
                   "#662E9B",
                   "#C5D86D",
@@ -37523,12 +37523,12 @@ rect.legend-mouseover-inactive,
                   "#D7263D",
                   "#1B998B",
                   "#2E294E",
-                  "#F46036",
+                  "#483FEB",
                   "#E2C044",
                 ],
                 palette8: [
                   "#662E9B",
-                  "#F86624",
+                  "#382FED",
                   "#F9C80E",
                   "#EA3546",
                   "#43BCCD",
@@ -37562,7 +37562,7 @@ document.addEventListener("DOMContentLoaded", () => {
           { name: "Sales", data: [44, 55, 57, 56, 61, 58, 63, 60, 66] },
           { name: "Purchase", data: [76, 85, 101, 98, 87, 105, 91, 114, 94] },
         ],
-        colors: ["#f7a085", "#E66239"],
+        colors: ["#908bf1", "#4942DD"],
         chart: {
           type: "bar",
           height: 350,
@@ -37649,7 +37649,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var n = {
         series: [44, 55],
         chart: { height: 200, type: "radialBar" },
-        colors: ["#5BE49B", "#E66239"],
+        colors: ["#5BE49B", "#4942DD"],
         plotOptions: {
           radialBar: {
             dataLabels: {
@@ -37699,7 +37699,7 @@ document.addEventListener("DOMContentLoaded", () => {
           gradient: {
             shade: "dark",
             type: "vertical",
-            gradientToColors: ["#007867", "#FFD666", "#FFAC82"],
+            gradientToColors: ["#007867", "#FFD666", "#8E88F9"],
             stops: [0, 100],
           },
         },
@@ -37730,7 +37730,7 @@ document.addEventListener("DOMContentLoaded", () => {
           zoom: { enabled: !1 },
           toolbar: { show: !1 },
         },
-        colors: ["#E66239", "#198754"],
+        colors: ["#4942DD", "#198754"],
         stroke: { width: [3, 2.5], curve: "smooth" },
         markers: { size: 4, hover: { sizeOffset: 2 } },
         series: [

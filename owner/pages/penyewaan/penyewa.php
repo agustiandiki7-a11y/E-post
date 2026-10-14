@@ -6,8 +6,8 @@ $trx = new Penyewaan();
 $cabang = (new Kategori())->semua();
 
 $branch_id = isset($_GET['branch_id']) ? (int) $_GET['branch_id'] : 0;
-$dari = isset($_GET['dari']) && $_GET['dari'] !== '' ? $_GET['dari'] : date('Y-m-01');
-$sampai = isset($_GET['sampai']) && $_GET['sampai'] !== '' ? $_GET['sampai'] : date('Y-m-d');
+$dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-01'));
+$sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'));
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $data = $trx->semua($branch_id, $dari, $sampai, $cari);
 

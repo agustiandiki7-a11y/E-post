@@ -6,15 +6,15 @@ $cabang = (new Kategori())->semua();
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $row = $produk->cari($id);
 if (!$row) {
-    redirect('kendaraan');
+    redirect('kendaraan', 'danger', 'Data tidak ditemukan.');
 }
 $pesan = '';
 if (isset($_POST['nama_produk'])) {
     $result = $produk->ubah($id, (int) $_POST['branch_id'], trim($_POST['nama_produk']), (float) $_POST['harga_jual'], (int) $_POST['stok']);
     if ($result) {
-        redirect('kendaraan');
+        redirect('kendaraan', 'success', 'Data berhasil diperbarui.');
     }
-    $pesan = 'Data produk gagal diubah.';
+    $pesan = $produk->error ?: 'Data produk gagal diubah.';
 }
 ?>
 <main id="content" class="content py-10">
@@ -36,7 +36,7 @@ if (isset($_POST['nama_produk'])) {
             <div class="col-12">
                 <div class="card">
                     <div class="card-body p-4">
-                        <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                        <?php toast('danger', $pesan); ?>
                         <form method="post" action="">
                             <div class="col-md-12 mb-3">
                                 <label for="branch_id" class="form-label">Cabang</label>

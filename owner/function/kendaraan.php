@@ -5,6 +5,7 @@ require_once 'database/connection.php';
 class Kendaraan
 {
     private $conn;
+    public $error = '';
 
     public function __construct()
     {
@@ -35,8 +36,27 @@ class Kendaraan
         return $stmt->get_result()->fetch_assoc();
     }
 
+    private function cek($branch_id, $nama, $harga, $stok)
+    {
+        if ((int) $branch_id < 1) {
+            $this->error = 'Pilih cabang untuk produk ini.';
+        } elseif (trim($nama) === '' || mb_strlen($nama) > 100) {
+            $this->error = 'Nama produk wajib diisi (maksimal 100 karakter).';
+        } elseif ($harga < 0 || $harga > 999999999) {
+            $this->error = 'Harga jual tidak valid.';
+        } elseif ($stok < 0 || $stok > 1000000) {
+            $this->error = 'Stok tidak boleh negatif.';
+        } else {
+            return true;
+        }
+        return false;
+    }
+
     public function tambah($branch_id, $nama_produk, $harga_jual, $stok)
     {
+        if (!$this->cek($branch_id, $nama_produk, $harga_jual, $stok)) {
+            return false;
+        }
         $stmt = $this->conn->prepare(
             "INSERT INTO products (branch_id, nama_produk, harga_jual, stok) VALUES (?, ?, ?, ?)"
         );
@@ -46,6 +66,9 @@ class Kendaraan
 
     public function ubah($id, $branch_id, $nama_produk, $harga_jual, $stok)
     {
+        if (!$this->cek($branch_id, $nama_produk, $harga_jual, $stok)) {
+            return false;
+        }
         $stmt = $this->conn->prepare(
             "UPDATE products SET branch_id = ?, nama_produk = ?, harga_jual = ?, stok = ? WHERE id = ?"
         );

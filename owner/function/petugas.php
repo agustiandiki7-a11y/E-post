@@ -6,6 +6,7 @@ require_once 'database/connection.php';
 class Petugas
 {
     private $conn;
+    public $bolehKosong = false;
     public $error = '';
 
     public function __construct()
@@ -40,8 +41,23 @@ class Petugas
     }
 
     // Validasi umum: role hanya kasir/manajer, cabang wajib dipilih
-    private function valid($role, $branch_id)
+    private function valid($role, $branch_id, $nama = '', $email = '', $password = null)
     {
+        if (trim($nama) === '' || mb_strlen($nama) > 100) {
+            $this->error = 'Nama wajib diisi (maksimal 100 karakter).';
+            return false;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 100) {
+            $this->error = 'Format email tidak valid.';
+            return false;
+        }
+        // password kosong saat ubah = tidak diganti; saat tambah wajib
+        if (!($password === '' && $this->bolehKosong)) {
+            if (strlen($password) < 8 || strlen($password) > 72) {
+                $this->error = 'Password harus 8 sampai 72 karakter.';
+                return false;
+            }
+        }
         if (!in_array($role, ['kasir', 'manajer'], true)) {
             $this->error = 'Role harus kasir atau manajer.';
             return false;
@@ -66,7 +82,7 @@ class Petugas
 
     public function tambah($nama, $email, $password, $role, $branch_id)
     {
-        if (!$this->valid($role, $branch_id)) {
+        if (!$this->valid($role, $branch_id, $nama, $email, (string) $password)) {
             return false;
         }
         $branch_id = (int) $branch_id;
@@ -86,7 +102,8 @@ class Petugas
     // $password kosong = password lama tidak diubah
     public function ubah($id, $nama, $email, $password, $role, $branch_id)
     {
-        if (!$this->valid($role, $branch_id)) {
+        $this->bolehKosong = true;
+        if (!$this->valid($role, $branch_id, $nama, $email, (string) $password)) {
             return false;
         }
         $branch_id = (int) $branch_id;

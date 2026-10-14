@@ -1,0 +1,34 @@
+# Dependensi & build
+node_modules/
+vendor/
+
+# Rahasia & konfigurasi lokal
+.env
+.env.*
+*.local.php
+config.local.php
+
+# Log, cache, sementara
+*.log
+*.tmp
+*.bak
+cache/
+tmp/
+uploads/
+
+# Dump database & arsip
+*.zip
+*.rar
+*.7z
+backup*/
+*-backup.sql
+
+# Catatan akun (berisi password)
+catatan-akun*.txt
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

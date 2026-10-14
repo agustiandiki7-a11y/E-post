@@ -2,7 +2,7 @@
   <aside id="sidebar" class="sidebar">
       <div class="logo-area">
           <a href="index.php?page=dashboard" class="d-inline-flex"><img src="template/src/assets/images/logo-icon.svg" alt="" width="24">
-              <span class="logo-text ms-2 fw-bold fs-5">E-POS</span>
+              <span class="logo-text ms-2 fw-bold fs-5">Nexora POS</span>
           </a>
       </div>
       <ul class="nav flex-column">

@@ -3,15 +3,7 @@
 $menunggu = $mgr->daftarVoid('menunggu_void');
 $riwayat = $mgr->daftarVoid('void');
 
-$flash = null;
-if (isset($_SESSION['flash'])) {
-    $flash = $_SESSION['flash'];
-    unset($_SESSION['flash']);
-}
 ?>
-<?php if ($flash) { ?>
-    <div class="alert alert-<?= e($flash[0]) ?>"><?= e($flash[1]) ?></div>
-<?php } ?>
 
 <div class="row">
     <div class="col-12 mb-4">
@@ -37,11 +29,13 @@ if (isset($_SESSION['flash'])) {
                                 <td class="text-end"><?= rupiah($t['total_bayar']) ?></td>
                                 <td>
                                     <form method="post" class="d-inline" onsubmit="return confirm('Setujui void? Stok barang akan dikembalikan.')">
+                                        <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
                                         <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
                                         <input type="hidden" name="aksi" value="setujui">
                                         <button type="submit" class="btn btn-sm btn-primary"><i class="ti ti-check"></i> Setujui</button>
                                     </form>
                                     <form method="post" class="d-inline" onsubmit="return confirm('Tolak pengajuan void ini?')">
+                                        <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
                                         <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
                                         <input type="hidden" name="aksi" value="tolak">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="ti ti-x"></i> Tolak</button>

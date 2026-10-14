@@ -4,7 +4,7 @@
 // Nama peran untuk ditampilkan
 function eposRoleLabel($role)
 {
-    $map = ['admin' => 'Owner', 'manajer' => 'Manajer', 'manager' => 'Manajer', 'kasir' => 'Kasir'];
+    $map = ['admin' => 'Owner', 'manajer' => 'Manajer Cabang', 'manager' => 'Manajer Cabang', 'kasir' => 'Kasir'];
     $r = strtolower(trim((string) $role));
     return isset($map[$r]) ? $map[$r] : ucfirst($r);
 }
@@ -12,7 +12,7 @@ function eposRoleLabel($role)
 // Avatar bulat berisi inisial nama (warna mengikuti peran), supaya profil sesuai siapa yang login
 function eposAvatar($nama, $role, $ukuran = 36)
 {
-    $warna = ['admin' => '#e66239', 'manajer' => '#2563eb', 'manager' => '#2563eb', 'kasir' => '#16a34a'];
+    $warna = ['admin' => '#4942dd', 'manajer' => '#2563eb', 'manager' => '#2563eb', 'kasir' => '#16a34a'];
     $r = strtolower(trim((string) $role));
     $bg = isset($warna[$r]) ? $warna[$r] : '#64748b';
 

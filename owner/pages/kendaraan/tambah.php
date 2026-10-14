@@ -8,9 +8,9 @@ $pesan = '';
 if (isset($_POST['nama_produk'])) {
     $result = $produk->tambah((int) $_POST['branch_id'], trim($_POST['nama_produk']), (float) $_POST['harga_jual'], (int) $_POST['stok']);
     if ($result) {
-        redirect('kendaraan');
+        redirect('kendaraan', 'success', 'Data berhasil ditambahkan.');
     }
-    $pesan = 'Data produk gagal ditambahkan.';
+    $pesan = $produk->error ?: 'Data produk gagal ditambahkan.';
 }
 ?>
 <main id="content" class="content py-10">
@@ -32,7 +32,7 @@ if (isset($_POST['nama_produk'])) {
             <div class="col-12">
                 <div class="card">
                     <div class="card-body p-4">
-                        <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                        <?php toast('danger', $pesan); ?>
                         <form method="post" action="">
                             <div class="col-md-12 mb-3">
                                 <label for="branch_id" class="form-label">Cabang</label>

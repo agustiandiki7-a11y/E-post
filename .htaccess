@@ -1,0 +1,16 @@
+# Nexora POS - pengaman Apache (Laragon memakai Apache; php -S mengabaikan file ini)
+Options -Indexes
+
+# File data / catatan tidak boleh diunduh lewat browser
+<FilesMatch "(?i)\.(sql|log|txt|md|zip|bak|env|ini|sh)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "same-origin"
+</IfModule>

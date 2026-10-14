@@ -9,7 +9,7 @@ if (isset($_POST['nama'])) {
     $role = in_array($_POST['role'], ['kasir', 'manajer']) ? $_POST['role'] : 'kasir';
     $result = $petugas->tambah(trim($_POST['nama']), trim($_POST['email']), $_POST['password'], $role, $_POST['branch_id']);
     if ($result) {
-        redirect('petugas');
+        redirect('petugas', 'success', 'Data berhasil ditambahkan.');
     }
     $pesan = $petugas->error ?: 'Data user gagal ditambahkan.';
     $row = ['nama' => $_POST['nama'], 'email' => $_POST['email'], 'role' => $role, 'branch_id' => $_POST['branch_id']];
@@ -34,7 +34,7 @@ if (isset($_POST['nama'])) {
             <div class="col-12">
                 <div class="card">
                     <div class="card-body p-4">
-                        <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                        <?php toast('danger', $pesan); ?>
                         <form method="post" action="">
                             <div class="row">
                                 <div class="col-md-6 mb-3">

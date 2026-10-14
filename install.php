@@ -1,12 +1,12 @@
 <?php
 // ============================================================
-// INSTALLER / PERBAIKAN DATABASE E-POS
+// INSTALLER / PERBAIKAN DATABASE Nexora POS
 // Buka sekali lewat browser: http://localhost/E-post/install.php
 //
 // Yang dikerjakan:
 //  1. Membuat database 'e-pos' kalau belum ada
 //  2. Memeriksa 5 tabel (users, branches, products, transactions, transaction_details)
-//  3. Membuat/memperbarui 5 akun contoh dan MENJAMIN password-nya cocok
+//  3. Membuat akun contoh yang belum ada (akun yang sudah punya password valid tidak diubah)
 //  4. Memeriksa folder aplikasi (login, owner, manajer, kasir)
 //
 // Aman dijalankan berulang kali: tabel yang sudah benar TIDAK dihapus.
@@ -125,16 +125,21 @@ function siapkanAkun($c)
     $c->query(
         "INSERT IGNORE INTO branches (id, nama_cabang, alamat, telepon) VALUES
          (1, 'Cabang Ungaran', 'Jl. Diponegoro No. 10, Ungaran', '024-6921001'),
-         (2, 'Cabang Semarang', 'Jl. Pandanaran No. 25, Semarang', '024-8311002')"
+         (2, 'Cabang Semarang', 'Jl. Pandanaran No. 25, Semarang', '024-8311002'),
+         (3, 'Cabang Salatiga', 'Jl. Jend. Sudirman No. 8, Salatiga', '0298-321003')"
     );
 
     $akun = [
-        ['Owner E-POS',       'admin@epos.test',    'admin123',   'admin',   null],
-        ['Kasir Ungaran',     'kasir1@epos.test',   'kasir123',   'kasir',   1],
-        ['Kasir Semarang',    'kasir2@epos.test',   'kasir123',   'kasir',   2],
-        ['Manajer Ungaran',   'manajer1@epos.test', 'manajer123', 'manajer', 1],
-        ['Manajer Semarang',  'manajer2@epos.test', 'manajer123', 'manajer', 2],
+        ['Diki Agustian', 'agustiandiki7@gmail.com', 'Owner@Nexora26', 'admin', null],
+        ['Rina Wulandari', 'rina@nexora.test', 'Rina@Kasir26', 'kasir', 1],
+        ['Dedi Prasetyo', 'dedi@nexora.test', 'Dedi@Kasir26', 'kasir', 2],
+        ['Piter', 'piter@gmail.com', 'Piter@Ungaran26', 'manajer', 1],
+        ['Lestari Ayu', 'lestari@nexora.test', 'Lestari@Smg26', 'manajer', 2],
+        ['Sari Handayani', 'sari@nexora.test', 'Sari@Kasir26', 'kasir', 3],
+        ['Bayu Nugroho', 'bayu@nexora.test', 'Bayu@Salatiga26', 'manajer', 3],
+        ['Tono Wijaya', 'tono@nexora.test', 'Tono@Kasir26', 'kasir', 1],
     ];
+
 
     foreach ($akun as $a) {
         $nama = $a[0];
@@ -150,6 +155,15 @@ function siapkanAkun($c)
         $row = $q->get_result()->fetch_assoc();
 
         if ($row) {
+            // Akun yang sudah punya hash valid TIDAK disentuh: password yang sudah kamu ganti tidak boleh di-reset
+            $cek = $c->prepare("SELECT password FROM users WHERE id = ?");
+            $cek->bind_param('i', $row['id']);
+            $cek->execute();
+            $lama = $cek->get_result()->fetch_assoc();
+            if (preg_match('/^\$2[aby]\$/', (string) $lama['password'])) {
+                $hasil[] = [$email, '(tidak diubah)', $role, 'dipertahankan', true];
+                continue;
+            }
             $id = (int) $row['id'];
             $u = $c->prepare("UPDATE users SET nama = ?, password = ?, role = ?, branch_id = ? WHERE id = ?");
             $u->bind_param('sssii', $nama, $hash, $role, $branch, $id);
@@ -196,7 +210,7 @@ try {
         foreach ($masalah as $m) {
             catat('warn', $m);
         }
-        catat('warn', 'Struktur tabel belum sesuai dengan yang dipakai aplikasi. Klik tombol merah di bawah untuk membangun ulang (tabel E-POS yang lama akan dihapus).');
+        catat('warn', 'Struktur tabel belum sesuai dengan yang dipakai aplikasi. Klik tombol merah di bawah untuk membangun ulang (tabel Nexora POS yang lama akan dihapus).');
     } else {
         catat('ok', 'Struktur 5 tabel sudah benar.');
         perbaikiKolomPassword($c);
@@ -227,7 +241,7 @@ $semuaCocok = $hasil && !in_array(false, array_column($hasil, 4), true);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Installer E-POS</title>
+    <title>Installer Nexora POS</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #f5f5f5; color: #171717; margin: 0; padding: 24px; }
         .box { max-width: 780px; margin: 0 auto; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 28px; }
@@ -235,11 +249,11 @@ $semuaCocok = $hasil && !in_array(false, array_column($hasil, 4), true);
         h2 { font-size: 1.05rem; margin: 24px 0 8px; }
         ul { padding-left: 20px; margin: 0; }
         li { margin: 5px 0; }
-        .ok { color: #15803d; } .warn { color: #b45309; } .err { color: #b91c1c; }
+        .ok { color: #15803d; } .warn { color: #1912ab; } .err { color: #b91c1c; }
         table { border-collapse: collapse; width: 100%; margin: 8px 0; }
         td, th { border: 1px solid #e5e5e5; padding: 8px 10px; text-align: left; font-size: .92rem; }
         th { background: #fafafa; }
-        .btn { display: inline-block; background: #e66239; color: #fff; border: 0; padding: 11px 22px; border-radius: 8px; font-size: 1rem; text-decoration: none; cursor: pointer; }
+        .btn { display: inline-block; background: #4942dd; color: #fff; border: 0; padding: 11px 22px; border-radius: 8px; font-size: 1rem; text-decoration: none; cursor: pointer; }
         .btn-red { background: #b91c1c; }
         small, .muted { color: #737373; }
         code { background: #f5f5f5; padding: 1px 5px; border-radius: 4px; }
@@ -247,7 +261,7 @@ $semuaCocok = $hasil && !in_array(false, array_column($hasil, 4), true);
 </head>
 <body>
 <div class="box">
-    <h1>Installer E-POS</h1>
+    <h1>Installer Nexora POS</h1>
     <div class="muted">Lokasi proyek: <code><?= htmlspecialchars(__DIR__) ?></code></div>
 
     <h2>Hasil pemeriksaan</h2>
@@ -275,7 +289,7 @@ $semuaCocok = $hasil && !in_array(false, array_column($hasil, 4), true);
 
     <?php if ($butuhKonfirmasi) { ?>
         <h2>Perlu dibangun ulang</h2>
-        <form method="post" onsubmit="return confirm('Semua tabel E-POS yang lama akan dihapus dan dibuat ulang. Lanjutkan?')">
+        <form method="post" onsubmit="return confirm('Semua tabel Nexora POS yang lama akan dihapus dan dibuat ulang. Lanjutkan?')">
             <button type="submit" name="rebuild" value="1" class="btn btn-red">Bangun ulang database</button>
         </form>
     <?php } elseif ($semuaCocok) { ?>

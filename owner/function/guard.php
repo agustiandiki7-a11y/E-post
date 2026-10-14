@@ -1,9 +1,7 @@
 <?php
 // Penjaga halaman Owner/Admin + fungsi bantu kecil
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-date_default_timezone_set('Asia/Jakarta');
+require_once __DIR__ . '/../../login/keamanan.php';
+eposMulai();   // sesi aman, header keamanan, penanganan error
 
 // Jangan simpan halaman di cache browser: setelah logout, tombol Back tidak menampilkan isi lama
 header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -26,7 +24,7 @@ function tolakAkses($peran)
         . '<div style="background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:32px;max-width:420px;text-align:center">'
         . '<h2 style="margin:0 0 8px">Akses ditolak</h2>'
         . '<p style="color:#525252">Halaman ini khusus ' . htmlspecialchars($peran) . '. Akunmu tidak punya izin untuk membukanya.</p>'
-        . '<a href="../login/index.php" style="display:inline-block;background:#e66239;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;margin-right:6px">Ke halaman saya</a>'
+        . '<a href="../login/index.php" style="display:inline-block;background:#4942dd;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;margin-right:6px">Ke halaman saya</a>'
         . '<a href="../login/logout.php" style="display:inline-block;border:1px solid #d4d4d4;color:#171717;padding:10px 18px;border-radius:8px;text-decoration:none">Logout</a>'
         . '</div></body></html>';
     exit;
@@ -40,6 +38,9 @@ if (rolePakai($_SESSION['user']['role']) !== 'admin') {
     tolakAkses('Admin / Owner');
 }
 
+// Semua POST wajib bertoken CSRF; token disisipkan otomatis ke setiap form
+eposCsrfOtomatis();
+
 function e($v)
 {
     return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
@@ -50,8 +51,12 @@ function rupiah($n)
     return 'Rp ' . number_format((float) $n, 0, ',', '.');
 }
 
-function redirect($page)
+function redirect($page, $tipe = '', $pesan = '')
 {
+    if ($pesan !== '') {
+        toastFlash($tipe, $pesan);
+    }
+    $page = preg_replace('/[^a-z0-9_]/i', '', (string) $page);
     echo "<script>window.location.href='index.php?page=" . $page . "'</script>";
     exit;
 }
@@ -65,4 +70,10 @@ function badgeStatus($s)
     ];
     $b = isset($map[$s]) ? $map[$s] : ['bg-secondary', $s];
     return '<span class="badge ' . $b[0] . '">' . $b[1] . '</span>';
+}
+
+function tglValid($t, $default)
+{
+    $d = DateTime::createFromFormat('Y-m-d', (string) $t);
+    return ($d && $d->format('Y-m-d') === $t) ? $t : $default;
 }

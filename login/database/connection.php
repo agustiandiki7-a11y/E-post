@@ -1,5 +1,5 @@
 <?php
-// Koneksi database E-POS (Laragon: user root, password kosong)
+// Koneksi database Nexora POS (Laragon: user root, password kosong)
 require_once __DIR__ . '/../../login/database/cek_skema.php';
 
 class Database

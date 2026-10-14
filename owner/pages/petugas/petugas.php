@@ -6,7 +6,7 @@ $pesan = '';
 
 if (isset($_POST['hapus_id'])) {
     if ($petugas->hapus((int) $_POST['hapus_id'])) {
-        redirect('petugas');
+        redirect('petugas', 'success', 'Data berhasil dihapus.');
     }
     $pesan = 'User tidak bisa dihapus karena sudah punya transaksi.';
 }
@@ -36,14 +36,14 @@ $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                <?php toast('danger', $pesan); ?>
                 <form method="get" class="d-flex gap-2 mb-3 flex-wrap">
                     <input type="hidden" name="page" value="petugas">
                     <input type="text" name="cari" value="<?= e($cari) ?>" class="form-control" placeholder="Cari nama / email..." style="max-width: 250px;">
                     <select name="role" class="form-select" style="max-width: 180px;">
                         <option value="">Semua role</option>
                         <option value="kasir" <?= $role == 'kasir' ? 'selected' : '' ?>>Kasir</option>
-                        <option value="manajer" <?= $role == 'manajer' ? 'selected' : '' ?>>Manajer</option>
+                        <option value="manajer" <?= $role == 'manajer' ? 'selected' : '' ?>>Manajer Cabang</option>
                     </select>
                     <button class="btn btn-outline-secondary" type="submit"><i class="ti ti-filter"></i> Filter</button>
                 </form>
@@ -68,7 +68,7 @@ $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
                                     <td><?= $no++ ?></td>
                                     <td class="fw-semibold"><?= e($row['nama']) ?></td>
                                     <td><?= e($row['email']) ?></td>
-                                    <td><span class="badge <?= $warna[$row['role']] ?>"><?= e(ucfirst($row['role'])) ?></span></td>
+                                    <td><span class="badge <?= $warna[$row['role']] ?>"><?= e($row['role'] == 'manajer' ? 'Manajer Cabang' : ucfirst($row['role'])) ?></span></td>
                                     <td><?= e($row['nama_cabang']) ?></td>
                                     <td>
                                         <a href="index.php?page=updatePetugas&id=<?= (int) $row['id'] ?>"><i class="ti ti-edit"></i></a>

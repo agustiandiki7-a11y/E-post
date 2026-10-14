@@ -9,7 +9,7 @@ if (isset($_POST['nama_cabang'])) {
         trim($_POST['telepon'])
     );
     if ($result) {
-        redirect('kategori');
+        redirect('kategori', 'success', 'Data berhasil ditambahkan.');
     }
     $pesan = 'Data cabang gagal ditambahkan.';
 }
@@ -33,7 +33,7 @@ if (isset($_POST['nama_cabang'])) {
             <div class="col-12">
                 <div class="card">
                     <div class="card-body p-4">
-                        <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                        <?php toast('danger', $pesan); ?>
                         <form method="post" action="">
                             <div class="col-md-12 mb-3">
                                 <label for="nama_cabang" class="form-label">Nama Cabang</label>

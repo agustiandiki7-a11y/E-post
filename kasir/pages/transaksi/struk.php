@@ -27,9 +27,9 @@ $baru = isset($_GET['baru']);
         .aksi { max-width: 320px; margin: 16px auto 0; display: flex; gap: 8px; flex-wrap: wrap; font-family: "Segoe UI", Arial, sans-serif; }
         .aksi a, .aksi button { flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; border: 1px solid #d4d4d4; background: #fff; color: #111; text-decoration: none; font-size: 14px; cursor: pointer; }
         .aksi .kembali { flex: 0 0 100%; text-align: left; border: 0; background: transparent; padding: 4px 2px; color: #555; }
-        .aksi .kembali:hover { color: #e66239; }
+        .aksi .kembali:hover { color: #4942dd; }
         .aksi .baru { background: #111; border-color: #111; color: #fff; }
-        .aksi .utama { background: #e66239; border-color: #e66239; color: #fff; }
+        .aksi .utama { background: #4942dd; border-color: #4942dd; color: #fff; }
         .ok { max-width: 320px; margin: 16px auto 0; padding: 10px 12px; border-radius: 8px; background: #dcfce7; color: #166534; font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; }
         .struk { width: 320px; margin: 16px auto 32px; background: #fff; padding: 18px 16px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
         .c { text-align: center; }
@@ -50,7 +50,6 @@ $baru = isset($_GET['baru']);
     </style>
 </head>
 <body>
-    <?php if ($baru) { ?><div class="ok">Transaksi berhasil disimpan.</div><?php } ?>
     <div class="aksi">
         <a href="<?= $baru ? 'index.php?page=dashboard' : 'index.php?page=riwayat' ?>" class="kembali">&larr; Kembali</a>
         <button type="button" class="utama" onclick="window.print()">Cetak Struk</button>
@@ -59,7 +58,7 @@ $baru = isset($_GET['baru']);
 
     <div class="struk">
         <div class="c">
-            <h1>E-POS</h1>
+            <h1>Nexora POS</h1>
             <div><?= e($cabang['nama_cabang']) ?></div>
             <div class="kecil"><?= e($cabang['alamat']) ?></div>
             <div class="kecil"><?= e($cabang['telepon']) ?></div>
@@ -87,5 +86,6 @@ $baru = isset($_GET['baru']);
         <hr>
         <div class="c">Terima kasih<br>Selamat berbelanja kembali</div>
     </div>
+<?php toastRender(); ?>
 </body>
 </html>

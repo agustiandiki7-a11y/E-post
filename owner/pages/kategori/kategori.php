@@ -6,7 +6,7 @@ $pesan = '';
 
 if (isset($_POST['hapus_id'])) {
     if ($kategori->hapus((int) $_POST['hapus_id'])) {
-        redirect('kategori');
+        redirect('kategori', 'success', 'Data berhasil dihapus.');
     }
     $pesan = 'Cabang tidak bisa dihapus karena masih dipakai produk, user, atau transaksi.';
 }
@@ -31,7 +31,7 @@ $data = $kategori->semua($cari);
         </div>
         <div class="row">
             <div class="col-12">
-                <?php if ($pesan) { ?><div class="alert alert-danger"><?= e($pesan) ?></div><?php } ?>
+                <?php toast('danger', $pesan); ?>
                 <form method="get" class="d-flex gap-2 mb-3">
                     <input type="hidden" name="page" value="kategori">
                     <input type="text" name="cari" value="<?= e($cari) ?>" class="form-control" placeholder="Cari nama / alamat cabang..." style="max-width: 280px;">

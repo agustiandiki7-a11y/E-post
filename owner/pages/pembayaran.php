@@ -3,8 +3,8 @@
 require_once 'function/pembayaran.php';
 $lap = new Pembayaran();
 
-$dari = isset($_GET['dari']) && $_GET['dari'] !== '' ? $_GET['dari'] : date('Y-m-01');
-$sampai = isset($_GET['sampai']) && $_GET['sampai'] !== '' ? $_GET['sampai'] : date('Y-m-d');
+$dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-01'));
+$sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'));
 
 $ringkas = $lap->ringkasan($dari, $sampai);
 $cabang = $lap->perCabang($dari, $sampai);

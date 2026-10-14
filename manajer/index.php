@@ -16,8 +16,12 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 // Aksi void diproses sebelum ada output HTML (supaya bisa redirect)
 if ($page === 'void' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = (int) $_POST['id'];
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
     $aksi = isset($_POST['aksi']) ? $_POST['aksi'] : '';
+    if (!csrfValid(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+        $_SESSION['flash'] = ['danger', 'Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.'];
+        redirect('void');
+    }
     $ok = ($aksi === 'setujui') ? $mgr->setujuiVoid($id) : (($aksi === 'tolak') ? $mgr->tolakVoid($id) : false);
     $_SESSION['flash'] = $ok
         ? ['success', $aksi === 'setujui' ? 'Void disetujui dan stok dikembalikan.' : 'Pengajuan void ditolak.']
