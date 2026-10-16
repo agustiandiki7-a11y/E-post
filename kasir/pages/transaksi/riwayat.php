@@ -15,6 +15,9 @@ foreach ($rows as $r) {
         $total += $r['total_bayar'];
     }
 }
+$hal = halIni();
+$jml = count($rows);
+$rows = halPotong($rows, $hal);
 ?>
 <div class="card mb-4">
     <div class="card-body">
@@ -41,7 +44,7 @@ foreach ($rows as $r) {
 
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><?= count($rows) ?> transaksi</h5>
+        <h5 class="mb-0"><?= $jml ?> transaksi</h5>
         <span class="text-secondary">Total (tanpa void): <strong><?= rupiah($total) ?></strong></span>
     </div>
     <div class="table-responsive">
@@ -73,4 +76,5 @@ foreach ($rows as $r) {
             </tbody>
         </table>
     </div>
+    <?php halNav($jml, $hal); ?>
 </div>

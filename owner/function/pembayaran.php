@@ -61,6 +61,22 @@ class Pembayaran
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // Untuk ekspor CSV: satu baris per tanggal per cabang
+    public function perCabangHari($dari, $sampai)
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT DATE(t.tanggal) AS tgl, b.nama_cabang, COUNT(*) AS jml_transaksi,
+                    SUM(t.total_bayar) AS total_penjualan, SUM(t.diskon) AS total_diskon
+             FROM transactions t JOIN branches b ON b.id = t.branch_id
+             WHERE t.status <> 'void' AND DATE(t.tanggal) BETWEEN ? AND ?
+             GROUP BY DATE(t.tanggal), b.id, b.nama_cabang
+             ORDER BY tgl DESC, b.nama_cabang"
+        );
+        $stmt->bind_param('ss', $dari, $sampai);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function produkTerlaris($dari, $sampai, $limit = 5)
     {
         $stmt = $this->conn->prepare(

@@ -1,0 +1,5 @@
+# Hanya index.php (login) dan logout.php yang boleh dibuka langsung dari browser.
+# File PHP lain di folder ini hanyalah pustaka yang dipanggil lewat require.
+<FilesMatch "^(?!index\.php$|logout\.php$).*\.php$">
+    Require all denied
+</FilesMatch>

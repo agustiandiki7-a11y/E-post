@@ -52,28 +52,45 @@ class Kendaraan
         return false;
     }
 
-    public function tambah($branch_id, $nama_produk, $harga_jual, $stok)
+    public function tambah($branch_id, $nama_produk, $harga_jual, $stok, $foto = null)
     {
         if (!$this->cek($branch_id, $nama_produk, $harga_jual, $stok)) {
             return false;
         }
         $stmt = $this->conn->prepare(
-            "INSERT INTO products (branch_id, nama_produk, harga_jual, stok) VALUES (?, ?, ?, ?)"
+            "INSERT INTO products (branch_id, nama_produk, harga_jual, stok, foto) VALUES (?, ?, ?, ?, ?)"
         );
-        $stmt->bind_param('isdi', $branch_id, $nama_produk, $harga_jual, $stok);
-        return $stmt->execute();
+        $stmt->bind_param('isdis', $branch_id, $nama_produk, $harga_jual, $stok, $foto);
+        $ok = $stmt->execute();
+        if ($ok && $stok > 0) {
+            stokLogTulis($this->conn, (int) $this->conn->insert_id, (int) $branch_id, 'awal', (int) $stok, 0, (int) $stok, 'Produk baru ditambahkan');
+        }
+        return $ok;
     }
 
-    public function ubah($id, $branch_id, $nama_produk, $harga_jual, $stok)
+    // $foto: false = foto tidak diubah, null = hapus foto, string = path foto baru
+    public function ubah($id, $branch_id, $nama_produk, $harga_jual, $stok, $foto = false)
     {
         if (!$this->cek($branch_id, $nama_produk, $harga_jual, $stok)) {
             return false;
         }
-        $stmt = $this->conn->prepare(
-            "UPDATE products SET branch_id = ?, nama_produk = ?, harga_jual = ?, stok = ? WHERE id = ?"
-        );
-        $stmt->bind_param('isdii', $branch_id, $nama_produk, $harga_jual, $stok, $id);
-        return $stmt->execute();
+        $lama = $this->cari($id);
+        if ($foto === false) {
+            $stmt = $this->conn->prepare(
+                "UPDATE products SET branch_id = ?, nama_produk = ?, harga_jual = ?, stok = ? WHERE id = ?"
+            );
+            $stmt->bind_param('isdii', $branch_id, $nama_produk, $harga_jual, $stok, $id);
+        } else {
+            $stmt = $this->conn->prepare(
+                "UPDATE products SET branch_id = ?, nama_produk = ?, harga_jual = ?, stok = ?, foto = ? WHERE id = ?"
+            );
+            $stmt->bind_param('isdisi', $branch_id, $nama_produk, $harga_jual, $stok, $foto, $id);
+        }
+        $ok = $stmt->execute();
+        if ($ok && $lama && (int) $lama['stok'] !== (int) $stok) {
+            stokLogTulis($this->conn, (int) $id, (int) $branch_id, 'koreksi', (int) $stok - (int) $lama['stok'], (int) $lama['stok'], (int) $stok, 'Diubah lewat form produk');
+        }
+        return $ok;
     }
 
     public function hapus($id)
@@ -91,7 +108,7 @@ class Kendaraan
     public function stokMenipis($batas = 10)
     {
         $stmt = $this->conn->prepare(
-            "SELECT p.nama_produk, p.stok, b.nama_cabang
+            "SELECT p.nama_produk, p.stok, p.foto, b.nama_cabang
              FROM products p JOIN branches b ON b.id = p.branch_id
              WHERE p.stok <= ? ORDER BY p.stok ASC LIMIT 6"
         );

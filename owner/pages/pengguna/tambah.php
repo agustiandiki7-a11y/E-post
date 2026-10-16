@@ -1,0 +1,81 @@
+<?php
+require_once 'function/pengguna.php';
+require_once 'function/cabang.php';
+$pengguna = new Pengguna();
+$cabang = (new Cabang())->semua();
+$row = ['nama' => '', 'email' => '', 'role' => 'kasir', 'branch_id' => ''];
+$pesan = '';
+if (isset($_POST['nama'])) {
+    $role = in_array($_POST['role'], ['kasir', 'manajer']) ? $_POST['role'] : 'kasir';
+    $result = $pengguna->tambah(trim($_POST['nama']), trim($_POST['email']), $_POST['password'], $role, $_POST['branch_id']);
+    if ($result) {
+        redirect('pengguna', 'success', 'Data berhasil ditambahkan.');
+    }
+    $pesan = $pengguna->error ?: 'Data user gagal ditambahkan.';
+    $row = ['nama' => $_POST['nama'], 'email' => $_POST['email'], 'role' => $role, 'branch_id' => $_POST['branch_id']];
+}
+?>
+<main id="content" class="content py-10">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                    <div>
+                        <h1 class="fs-3 mb-1">Tambah User</h1>
+                        <p class="mb-0">Kasir dan manajer wajib terhubung ke satu cabang</p>
+                    </div>
+                    <div>
+                        <a href="index.php?page=pengguna" class="btn btn-primary">Kembali ke Daftar User</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <?php toast('danger', $pesan); ?>
+                        <form method="post" action="">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nama" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" name="nama" id="nama" value="<?= e($row['nama']) ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" id="email" value="<?= e($row['email']) ?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="password" class="form-label">Password </label>
+                                <input type="password" class="form-control" name="password" id="password" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="role" class="form-label">Role</label>
+                                    <select class="form-select" name="role" id="role" required>
+                                        <option value="kasir" <?= $row['role'] == 'kasir' ? 'selected' : '' ?>>Kasir</option>
+                                        <option value="manajer" <?= $row['role'] == 'manajer' ? 'selected' : '' ?>>Manajer Cabang</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="branch_id" class="form-label">Cabang</label>
+                                    <select class="form-select" name="branch_id" id="branch_id" required>
+                                        <option value="">-- Pilih cabang --</option>
+                                        <?php foreach ($cabang as $c) { ?>
+                                            <option value="<?= (int) $c['id'] ?>" <?= $row['branch_id'] == $c['id'] && $row['branch_id'] !== '' ? 'selected' : '' ?>><?= e($c['nama_cabang']) ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php include 'components/footer.php'; ?>
+    </div>
+</main>

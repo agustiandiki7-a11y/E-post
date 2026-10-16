@@ -14,11 +14,39 @@ $voidPending = $mgr->jumlahMenungguVoid();
 
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
+// Profil, restock, dan unduh CSV diproses sebelum ada output HTML
+if ($page === 'profil') {
+    profilProses();
+}
+if ($page === 'restock' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    restockProses(eposDb(), $BRANCH_ID);
+    redirect('stok');
+}
+if (isset($_GET['unduh'])) {
+    if ($page === 'penjualan') {
+        $dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-01'));
+        $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'));
+        $baris = [];
+        foreach ($mgr->penjualan($dari, $sampai, isset($_GET['kasir_id']) ? (int) $_GET['kasir_id'] : 0, isset($_GET['cari']) ? trim($_GET['cari']) : '') as $r) {
+            $baris[] = [$r['invoice_number'], $r['tanggal'], $r['nama_kasir'], (float) $r['diskon'], (float) $r['total_bayar'], $r['status']];
+        }
+        csvKirim('penjualan-' . $dari . '_' . $sampai . '.csv', ['Invoice', 'Tanggal', 'Kasir', 'Diskon', 'Total', 'Status'], $baris);
+    }
+    if ($page === 'shift') {
+        $tgl = tglValid(isset($_GET['tanggal']) ? $_GET['tanggal'] : '', $mgr->tanggalTerakhir());
+        $baris = [];
+        foreach (shiftCabang(eposDb(), $BRANCH_ID, $tgl) as $r) {
+            $baris[] = [$r['nama_kasir'], $r['buka'], $r['tutup'] ? $r['tutup'] : 'Berjalan', (float) $r['kas_awal'], $r['kas_akhir'] === null ? '' : (float) $r['kas_akhir'], $r['penjualan'] === null ? '' : (float) $r['penjualan'], $r['selisih'] === null ? '' : (float) $r['selisih'], (string) $r['catatan']];
+        }
+        csvKirim('shift-' . $tgl . '.csv', ['Kasir', 'Buka', 'Tutup', 'Kas awal', 'Kas akhir', 'Penjualan', 'Selisih', 'Catatan'], $baris);
+    }
+}
+
 // Aksi void diproses sebelum ada output HTML (supaya bisa redirect)
 if ($page === 'void' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
     $aksi = isset($_POST['aksi']) ? $_POST['aksi'] : '';
-    if (!csrfValid(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+    if (!eposCsrfOk(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
         $_SESSION['flash'] = ['danger', 'Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.'];
         redirect('void');
     }
@@ -35,6 +63,10 @@ $judul = [
     'detail'    => ['Detail Transaksi', 'Rincian barang yang dibeli'],
     'shift'     => ['Penutupan Shift Kasir', 'Rekap kasir per hari'],
     'void'      => ['Persetujuan Void', 'Setujui atau tolak pengajuan void dari kasir'],
+    'stok'      => ['Stok Produk', 'Pantau stok dan tambah barang masuk di ' . $cabang['nama_cabang']],
+    'restock'   => ['Restock Produk', 'Tambah stok barang yang masuk'],
+    'riwayatStok' => ['Riwayat Stok', 'Catatan penambahan dan pengurangan stok cabang ini'],
+    'profil'    => ['Profil Saya', 'Ubah nama dan ganti password akunmu'],
 ];
 if (!isset($judul[$page])) {
     $page = 'dashboard';
@@ -85,6 +117,18 @@ if (!isset($judul[$page])) {
                     break;
                 case 'void':
                     include 'pages/void.php';
+                    break;
+                case 'stok':
+                    include 'pages/stok.php';
+                    break;
+                case 'restock':
+                    include 'pages/restock.php';
+                    break;
+                case 'riwayatStok':
+                    include 'pages/riwayat_stok.php';
+                    break;
+                case 'profil':
+                    include '../login/halaman/profil.php';
                     break;
             }
             ?>

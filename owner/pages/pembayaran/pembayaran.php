@@ -9,6 +9,9 @@ $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'))
 $ringkas = $lap->ringkasan($dari, $sampai);
 $cabang = $lap->perCabang($dari, $sampai);
 $harian = $lap->perHari($dari, $sampai);
+$hal = halIni();
+$jml = count($harian);
+$harian = halPotong($harian, $hal);
 $terlaris = $lap->produkTerlaris($dari, $sampai, 5);
 $omzetMax = 0;
 foreach ($cabang as $c) {
@@ -25,6 +28,7 @@ foreach ($cabang as $c) {
                         <p class="mb-0">Ringkasan penjualan seluruh cabang, <?= e(date('d/m/Y', strtotime($dari))) ?> s/d <?= e(date('d/m/Y', strtotime($sampai))) ?> (transaksi void tidak dihitung)</p>
                     </div>
                     <div>
+                        <a class="btn btn-outline-secondary" href="?<?= e(http_build_query(['page' => 'pembayaran', 'dari' => $dari, 'sampai' => $sampai, 'unduh' => 'csv'])) ?>"><i class="ti ti-download"></i> Unduh CSV</a>
                         <button class="btn btn-outline-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Cetak</button>
                     </div>
                 </div>
@@ -136,6 +140,7 @@ foreach ($cabang as $c) {
                             </tbody>
                         </table>
                     </div>
+                    <?php halNav($jml, $hal); ?>
                 </div>
             </div>
         </div>

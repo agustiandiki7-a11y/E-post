@@ -13,6 +13,9 @@ if (isset($_POST['hapus_id'])) {
 
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $data = $kategori->semua($cari);
+$hal = halIni();
+$jml = count($data);
+$data = halPotong($data, $hal);
 ?>
 <main id="content" class="content py-10">
     <div class="container-fluid">
@@ -37,7 +40,8 @@ $data = $kategori->semua($cari);
                     <input type="text" name="cari" value="<?= e($cari) ?>" class="form-control" placeholder="Cari nama / alamat cabang..." style="max-width: 280px;">
                     <button class="btn btn-outline-secondary" type="submit"><i class="ti ti-search"></i> Cari</button>
                 </form>
-                <div class="card table-responsive">
+                <div class="card">
+                <div class="table-responsive">
                     <table class="table mb-0 text-nowrap table-hover">
                         <thead class="table-light border-light">
                             <tr>
@@ -54,7 +58,7 @@ $data = $kategori->semua($cari);
                             <?php if (!$data) { ?>
                                 <tr><td colspan="7" class="text-center text-secondary py-4">Belum ada data cabang.</td></tr>
                             <?php } ?>
-                            <?php $no = 1; foreach ($data as $row) { ?>
+                            <?php $no = halMulai($hal); foreach ($data as $row) { ?>
                                 <tr class="align-middle">
                                     <td><?= $no++ ?></td>
                                     <td class="fw-semibold"><?= e($row['nama_cabang']) ?></td>
@@ -73,6 +77,8 @@ $data = $kategori->semua($cari);
                             <?php } ?>
                         </tbody>
                     </table>
+                </div>
+                <?php halNav($jml, $hal); ?>
                 </div>
             </div>
         </div>

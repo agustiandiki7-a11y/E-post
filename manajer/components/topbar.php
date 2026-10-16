@@ -61,6 +61,7 @@
                     </div>
                     <div class="p-3 d-flex flex-column gap-1 small lh-lg">
                         <a href="index.php?page=dashboard"><span>Dashboard</span></a>
+                        <a href="index.php?page=profil"><span>Profil &amp; Password</span></a>
                         <a href="../login/logout.php" class="text-danger"><span>Logout</span></a>
                     </div>
                 </div>

@@ -61,7 +61,7 @@ class Penyewaan
     public function detail($transaction_id)
     {
         $stmt = $this->conn->prepare(
-            "SELECT d.*, p.nama_produk
+            "SELECT d.*, p.nama_produk, p.foto
              FROM transaction_details d
              JOIN products p ON p.id = d.product_id
              WHERE d.transaction_id = ?"

@@ -91,10 +91,22 @@ class Manajer
     public function stokMenipis($batas = 10)
     {
         $stmt = $this->conn->prepare(
-            "SELECT nama_produk, stok FROM products
+            "SELECT nama_produk, stok, foto FROM products
              WHERE branch_id = ? AND stok <= ? ORDER BY stok ASC LIMIT 6"
         );
         $stmt->bind_param('ii', $this->branch, $batas);
+        return $this->all($stmt);
+    }
+
+    // ---------- STOK PRODUK CABANG ----------
+    public function produkStok($cari = '')
+    {
+        $like = '%' . $cari . '%';
+        $stmt = $this->conn->prepare(
+            "SELECT id, nama_produk, harga_jual, stok, foto FROM products
+             WHERE branch_id = ? AND nama_produk LIKE ? ORDER BY stok ASC, nama_produk ASC"
+        );
+        $stmt->bind_param('is', $this->branch, $like);
         return $this->all($stmt);
     }
 
@@ -141,7 +153,7 @@ class Manajer
     public function detail($transaction_id)
     {
         $stmt = $this->conn->prepare(
-            "SELECT d.*, p.nama_produk
+            "SELECT d.*, p.nama_produk, p.foto
              FROM transaction_details d JOIN products p ON p.id = d.product_id
              WHERE d.transaction_id = ?"
         );
@@ -210,12 +222,17 @@ class Manajer
             $stmt->execute();
             $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+            $cur = $this->conn->prepare("SELECT stok FROM products WHERE id = ? FOR UPDATE");
             $upd = $this->conn->prepare("UPDATE products SET stok = stok + ? WHERE id = ?");
             foreach ($items as $it) {
                 $qty = (int) $it['qty'];
                 $pid = (int) $it['product_id'];
+                $cur->bind_param('i', $pid);
+                $cur->execute();
+                $sebelum = (int) $cur->get_result()->fetch_assoc()['stok'];
                 $upd->bind_param('ii', $qty, $pid);
                 $upd->execute();
+                stokLogTulis($this->conn, $pid, $this->branch, 'void', $qty, $sebelum, $sebelum + $qty, 'Void disetujui, transaksi #' . $id);
             }
 
             $stmt = $this->conn->prepare(

@@ -2,6 +2,12 @@
 // PERSETUJUAN VOID - pengajuan void kasir di cabang ini
 $menunggu = $mgr->daftarVoid('menunggu_void');
 $riwayat = $mgr->daftarVoid('void');
+$halM = halIni('hal_m');
+$jmlM = count($menunggu);
+$menunggu = halPotong($menunggu, $halM);
+$halR = halIni('hal_r');
+$jmlR = count($riwayat);
+$riwayat = halPotong($riwayat, $halR);
 
 ?>
 
@@ -10,7 +16,7 @@ $riwayat = $mgr->daftarVoid('void');
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Menunggu Persetujuan</h5>
-                <span class="badge bg-warning text-dark"><?= count($menunggu) ?></span>
+                <span class="badge bg-warning text-dark"><?= $jmlM ?></span>
             </div>
             <div class="table-responsive">
                 <table class="table mb-0 text-nowrap">
@@ -46,6 +52,7 @@ $riwayat = $mgr->daftarVoid('void');
                     </tbody>
                 </table>
             </div>
+            <?php halNav($jmlM, $halM, EPOS_PER_HAL, 'hal_m'); ?>
         </div>
     </div>
 </div>
@@ -75,6 +82,7 @@ $riwayat = $mgr->daftarVoid('void');
                     </tbody>
                 </table>
             </div>
+            <?php halNav($jmlR, $halR, EPOS_PER_HAL, 'hal_r'); ?>
         </div>
     </div>
 </div>

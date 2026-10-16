@@ -70,7 +70,7 @@ function eposMulai()
         header('X-Content-Type-Options: nosniff');
         header('Referrer-Policy: same-origin');
         header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
-        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
         header_remove('X-Powered-By');
     }
 }
@@ -180,3 +180,6 @@ function eposThrottleReset($email)
     @unlink(eposThrottleFile(eposIp() . '|' . strtolower($email)));
 }
 require_once __DIR__ . '/toast.php';
+require_once __DIR__ . '/bantu.php';
+
+require_once __DIR__ . '/fitur.php';

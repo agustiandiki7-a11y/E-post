@@ -5,13 +5,6 @@ eposMulai();
 header('Cache-Control: no-store, no-cache, must-revalidate');
 require_once __DIR__ . '/database/connection.php';
 
-// Samakan penulisan role: 'manajer' dan 'manager' dianggap sama -> 'manajer'
-function rolePakai($role)
-{
-    $r = strtolower(trim((string) $role));
-    return $r === 'manager' ? 'manajer' : $r;
-}
-
 // Cari halaman tujuan sesuai role.
 // Folder dicek benar-benar ada, jadi login tidak pernah diarahkan ke halaman 404.
 // Nama folder yang dipakai sama dengan nama role: owner (untuk admin), kasir, manajer.
@@ -101,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 eposThrottleReset($emailIsi);
                 unset($user['password']);
                 $_SESSION['user'] = $user;
+                toastFlash('success', 'Selamat datang, ' . $user['nama'] . '.');
                 header('Location: ' . $tujuan);
                 exit;
             }
@@ -207,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php } ?>
 <div class="page">
     <section class="side">
-        <div class="brand"><img src="../owner/template/src/assets/images/logo-icon.svg" alt="">Nexora POS</div>
+        <div class="brand"><img src="../assets/template/src/assets/images/logo-icon.svg" alt="">Nexora POS</div>
 
         <main class="formwrap">
             <h1 class="serif">Selamat datang kembali</h1>
@@ -239,8 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="roles">
-                <span class="av" aria-hidden="true"><b style="background:#4942dd">O</b><b style="background:#2563eb">M</b><b style="background:#16a34a">K</b></span>
-                <span>Satu halaman masuk untuk Owner, Manajer Cabang, dan Kasir.</span>
+              <p>Hallo apa kabar </p>
             </div>
         </main>
 

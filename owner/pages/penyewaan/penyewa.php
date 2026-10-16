@@ -17,6 +17,9 @@ foreach ($data as $r) {
         $total += $r['total_bayar'];
     }
 }
+$hal = halIni();
+$jml = count($data);
+$data = halPotong($data, $hal);
 ?>
 <main id="content" class="content py-10">
     <div class="container-fluid">
@@ -26,6 +29,9 @@ foreach ($data as $r) {
                     <div>
                         <h1 class="fs-3 mb-1">Transaksi Penjualan</h1>
                         <p class="mb-0">Seluruh transaksi dari semua cabang</p>
+                    </div>
+                    <div>
+                        <a class="btn btn-outline-secondary" href="?<?= e(http_build_query(['page' => 'penyewaan', 'branch_id' => $branch_id, 'dari' => $dari, 'sampai' => $sampai, 'cari' => $cari, 'unduh' => 'csv'])) ?>"><i class="ti ti-download"></i> Unduh CSV</a>
                     </div>
                 </div>
             </div>
@@ -57,7 +63,8 @@ foreach ($data as $r) {
                     </div>
                     <button class="btn btn-outline-secondary" type="submit"><i class="ti ti-filter"></i> Filter</button>
                 </form>
-                <div class="card table-responsive">
+                <div class="card">
+                <div class="table-responsive">
                     <table class="table mb-0 text-nowrap table-hover">
                         <thead class="table-light border-light">
                             <tr>
@@ -90,11 +97,13 @@ foreach ($data as $r) {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5" class="text-end fw-semibold border-bottom-0">Total penjualan (tidak termasuk void)</td>
+                                <td colspan="5" class="text-end fw-semibold border-bottom-0">Total penjualan semua halaman (tanpa void)</td>
                                 <td colspan="3" class="fw-bold border-bottom-0"><?= rupiah($total) ?></td>
                             </tr>
                         </tfoot>
                     </table>
+                </div>
+                <?php halNav($jml, $hal); ?>
                 </div>
             </div>
         </div>

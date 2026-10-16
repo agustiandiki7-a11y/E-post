@@ -9,9 +9,16 @@ foreach ($produk as $p) {
         'nama'  => $p['nama_produk'],
         'harga' => (float) $p['harga_jual'],
         'stok'  => (int) $p['stok'],
+        'foto'  => fotoAda($p['foto']) ? '../' . $p['foto'] : '',
     ];
 }
 ?>
+<?php if (empty($shiftAktif)) { ?>
+<div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-2 py-2" role="alert">
+    <span>Shift belum dibuka. Transaksi tetap bisa disimpan, tapi tidak masuk hitungan kas shift.</span>
+    <a href="index.php?page=shift" class="btn btn-sm btn-warning">Buka shift</a>
+</div>
+<?php } ?>
 <style>
     .pos { --indigo: #4942dd; --indigo-d: #2f29a8; --tint: #f1f0ff; --ink: #1c1c2e; --muted: #6b6b85; --line: #dfe1f3; }
     .mono { font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums; }
@@ -20,21 +27,30 @@ foreach ($produk as $p) {
     .pos-search input { width: 100%; height: 54px; border: 1.5px solid var(--line); border-radius: 14px; padding: 0 90px 0 48px; font-size: 16px; background: #fff; outline: none; transition: border-color .15s, box-shadow .15s; }
     .pos-search input:focus { border-color: var(--indigo); box-shadow: 0 0 0 4px rgba(73,66,221,.14); }
     .pos-search kbd { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: #eef0fb; color: var(--muted); border: 0; border-radius: 6px; padding: 3px 8px; font-size: 12px; }
+    .pos-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .pos-filter button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+    .pos-filter button:hover { border-color: var(--indigo); color: var(--indigo); }
+    .pos-filter button.on { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+    .pos-filter button:focus-visible { outline: 3px solid rgba(73,66,221,.45); outline-offset: 2px; }
     .pos-meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin: -4px 2px 12px; }
-    .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 12px; }
-    .pos-item { text-align: left; border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 14px; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s, transform .1s; position: relative; min-height: 124px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; color: var(--ink); }
+    .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 12px; }
+    @media (max-width: 575px) { .pos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .pos-item { min-height: 170px; } .pos-item .nm { font-size: 14px; } }
+    .pos-item { text-align: left; border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 10px 10px 14px; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s, transform .1s; position: relative; min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; color: var(--ink); }
     .pos-item:hover:not(:disabled) { border-color: var(--indigo); box-shadow: 0 6px 18px rgba(73,66,221,.14); }
     .pos-item:active:not(:disabled) { transform: scale(.98); }
     .pos-item:focus-visible { outline: 3px solid rgba(73,66,221,.45); outline-offset: 2px; }
     .pos-item:disabled { cursor: not-allowed; background: #f4f5fa; color: #9a9bb3; }
     .pos-item:disabled .hg { color: #9a9bb3; }
-    .pos-item .nm { font-weight: 700; line-height: 1.25; font-size: 15px; padding-right: 26px; }
+    .pos-item .ph { display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; object-fit: cover; background: #f1f2fb; }
+    .pos-item .ph.kosong { display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 700; color: var(--indigo); background: #ecebff; }
+    .pos-item.habis .ph { filter: grayscale(1); opacity: .55; }
+    .pos-item .nm { font-weight: 700; line-height: 1.25; font-size: 15px; }
     .pos-item .hg { color: var(--indigo); font-weight: 600; font-size: 15px; margin-top: 4px; }
     .pos-item .stk { font-size: 12px; color: var(--muted); }
     .pos-item .stk b { display: inline-block; border-radius: 999px; padding: 2px 9px; font-weight: 600; }
     .pos-item .stk .tipis { background: #fff3cd; color: #7a5a00; }
     .pos-item .stk .habis { background: #fde4e1; color: #a1271b; }
-    .pos-item .qty { position: absolute; top: 10px; right: 10px; background: var(--indigo); color: #fff; border-radius: 999px; min-width: 26px; height: 26px; font-size: 13px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 7px; }
+    .pos-item .qty { position: absolute; top: 16px; right: 16px; box-shadow: 0 2px 6px rgba(20,20,43,.25); background: var(--indigo); color: #fff; border-radius: 999px; min-width: 26px; height: 26px; font-size: 13px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 7px; }
     .pos-item.in-cart { border-color: var(--indigo); background: var(--tint); }
     .pos-item.in-cart .qty { display: flex; }
 
@@ -52,6 +68,9 @@ foreach ($produk as $p) {
     .line { padding: 9px 0; border-bottom: 1px dotted var(--line); }
     .line:last-child { border-bottom: 0; }
     .ln-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 14px; }
+    .ln-nm { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+    .ln-ph { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex: none; background: #f1f2fb; }
+    .ln-ph.kosong { display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: var(--indigo); background: #ecebff; }
     .ln-bot { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 12px; color: var(--muted); }
     .step { display: inline-flex; align-items: center; gap: 4px; }
     .step button { width: 28px; height: 28px; border: 1.5px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--ink); line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
@@ -93,7 +112,13 @@ foreach ($produk as $p) {
             <input type="text" id="cariProduk" placeholder="Cari produk..." autocomplete="off" aria-label="Cari produk">
             <kbd>/</kbd>
         </div>
-        <div class="pos-meta"><span><?= count($produk) ?> produk</span><span><?= e($cabang['nama_cabang']) ?></span></div>
+        <div class="pos-filter" role="group" aria-label="Filter stok">
+            <button type="button" class="on" data-f="semua">Semua</button>
+            <button type="button" data-f="tersedia">Stok aman</button>
+            <button type="button" data-f="menipis">Menipis</button>
+            <button type="button" data-f="habis">Habis</button>
+        </div>
+        <div class="pos-meta"><span id="jmlProduk"><?= count($produk) ?> produk</span><span><?= e($cabang['nama_cabang']) ?></span></div>
 
         <?php if (!$produk) { ?>
             <div class="empty-p">Belum ada produk di cabang ini. Hubungi owner untuk menambahkannya.</div>
@@ -101,8 +126,13 @@ foreach ($produk as $p) {
 
         <div class="pos-grid" id="daftarProduk">
             <?php foreach ($produk as $p) { ?>
-                <button type="button" class="pos-item btn-tambah" data-id="<?= (int) $p['id'] ?>" data-nama="<?= e(strtolower($p['nama_produk'])) ?>" <?= $p['stok'] <= 0 ? 'disabled' : '' ?>>
+                <button type="button" class="pos-item btn-tambah<?= $p['stok'] <= 0 ? ' habis' : '' ?>" data-id="<?= (int) $p['id'] ?>" data-nama="<?= e(strtolower($p['nama_produk'])) ?>" data-status="<?= stokStatus($p['stok']) ?>" <?= $p['stok'] <= 0 ? 'disabled' : '' ?>>
                     <span class="qty">0</span>
+                    <?php if (fotoAda($p['foto'])) { ?>
+                        <img class="ph" src="../<?= e($p['foto']) ?>" alt="" loading="lazy">
+                    <?php } else { ?>
+                        <span class="ph kosong" aria-hidden="true"><?= e(mb_strtoupper(mb_substr($p['nama_produk'], 0, 1))) ?></span>
+                    <?php } ?>
                     <span>
                         <div class="nm"><?= e($p['nama_produk']) ?></div>
                         <div class="hg mono"><?= rupiah($p['harga_jual']) ?></div>
@@ -201,7 +231,7 @@ foreach ($produk as $p) {
             ada = true;
             var p = PRODUK[id], q = cart[id];
             html += '<div class="line" data-id="' + id + '">'
-                + '<div class="ln-top"><span>' + esc(p.nama) + '</span><span class="mono">' + rp(p.harga * q) + '</span></div>'
+                + '<div class="ln-top"><span class="ln-nm">' + (p.foto ? '<img class="ln-ph" src="' + esc(p.foto) + '" alt="">' : '<span class="ln-ph kosong">' + esc(p.nama.charAt(0).toUpperCase()) + '</span>') + '<span>' + esc(p.nama) + '</span></span><span class="mono">' + rp(p.harga * q) + '</span></div>'
                 + '<div class="ln-bot"><span class="mono">' + q + ' x ' + rp(p.harga) + '</span>'
                 + '<span class="step"><button type="button" data-act="kurang" aria-label="Kurangi">&minus;</button>'
                 + '<b class="mono">' + q + '</b>'
@@ -292,16 +322,28 @@ foreach ($produk as $p) {
         }
     });
 
-    // cari produk
-    $('cariProduk').addEventListener('input', function () {
-        var kata = this.value.trim().toLowerCase(), tampil = 0;
+    // cari produk + filter stok (digabung)
+    var fStok = 'semua';
+    function saring() {
+        var kata = $('cariProduk').value.trim().toLowerCase(), tampil = 0;
         var baris = $('daftarProduk').querySelectorAll('.pos-item');
         for (var i = 0; i < baris.length; i++) {
-            var cocok = baris[i].getAttribute('data-nama').indexOf(kata) !== -1;
+            var cocok = baris[i].getAttribute('data-nama').indexOf(kata) !== -1
+                && (fStok === 'semua' || baris[i].getAttribute('data-status') === fStok);
             baris[i].style.display = cocok ? '' : 'none';
             if (cocok) { tampil++; }
         }
         $('tidakAda').style.display = (tampil === 0 && baris.length > 0) ? '' : 'none';
+        $('jmlProduk').textContent = tampil + ' produk';
+    }
+    $('cariProduk').addEventListener('input', saring);
+    document.querySelector('.pos-filter').addEventListener('click', function (ev) {
+        var b = ev.target.closest('[data-f]');
+        if (!b) { return; }
+        fStok = b.getAttribute('data-f');
+        var semua = this.querySelectorAll('button');
+        for (var i = 0; i < semua.length; i++) { semua[i].classList.toggle('on', semua[i] === b); }
+        saring();
     });
 
     // simpan transaksi

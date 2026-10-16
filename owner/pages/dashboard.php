@@ -98,7 +98,7 @@ foreach ($perCabang as $c) {
             </div>
             <div class="col-lg-5 mb-4">
                 <div class="card h-100">
-                    <div class="card-header"><h5 class="mb-0">Stok Menipis</h5></div>
+                    <div class="card-header"><h5 class="mb-0">Stok Menipis &amp; Habis</h5><?= fotoGaya() ?></div>
                     <div class="table-responsive">
                         <table class="table mb-0 text-nowrap">
                             <thead class="table-light border-light"><tr><th>Produk</th><th>Cabang</th><th class="text-end">Stok</th></tr></thead>
@@ -106,9 +106,9 @@ foreach ($perCabang as $c) {
                                 <?php if (!$menipis) { ?><tr><td colspan="3" class="text-center text-secondary py-3">Semua stok aman.</td></tr><?php } ?>
                                 <?php foreach ($menipis as $m) { ?>
                                     <tr>
-                                        <td><?= e($m['nama_produk']) ?></td>
+                                        <td><span class="d-inline-flex align-items-center gap-2"><?= fotoProduk($m['foto'], $m['nama_produk'], 32) ?><?= e($m['nama_produk']) ?></span></td>
                                         <td><?= e($m['nama_cabang']) ?></td>
-                                        <td class="text-end"><span class="badge bg-warning text-dark"><?= (int) $m['stok'] ?></span></td>
+                                        <td class="text-end"><?= (int) $m['stok'] <= 0 ? '<span class="badge bg-danger">Habis</span>' : '<span class="badge bg-warning text-dark">' . (int) $m['stok'] . '</span>' ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>

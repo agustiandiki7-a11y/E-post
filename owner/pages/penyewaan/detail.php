@@ -55,7 +55,7 @@ foreach ($items as $it) {
                         <tbody>
                             <?php foreach ($items as $it) { ?>
                                 <tr>
-                                    <td><?= e($it['nama_produk']) ?></td>
+                                    <td><span class="d-inline-flex align-items-center gap-2"><?= fotoGaya() ?><?= fotoProduk($it['foto'], $it['nama_produk'], 36) ?><?= e($it['nama_produk']) ?></span></td>
                                     <td class="text-end"><?= (int) $it['jumlah'] ?></td>
                                     <td class="text-end"><?= rupiah($it['harga_satuan']) ?></td>
                                     <td class="text-end"><?= rupiah($it['subtotal']) ?></td>

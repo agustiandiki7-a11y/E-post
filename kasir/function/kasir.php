@@ -37,7 +37,7 @@ class Kasir
     {
         $like = '%' . $cari . '%';
         $stmt = $this->conn->prepare(
-            "SELECT id, nama_produk, harga_jual, stok FROM products
+            "SELECT id, nama_produk, harga_jual, stok, foto FROM products
              WHERE branch_id = ? AND nama_produk LIKE ? ORDER BY nama_produk ASC"
         );
         $stmt->bind_param('is', $this->branch, $like);
@@ -47,7 +47,7 @@ class Kasir
     public function stokMenipis($batas = 10)
     {
         $stmt = $this->conn->prepare(
-            "SELECT nama_produk, stok FROM products
+            "SELECT nama_produk, stok, foto FROM products
              WHERE branch_id = ? AND stok <= ? ORDER BY stok ASC LIMIT 6"
         );
         $stmt->bind_param('ii', $this->branch, $batas);
@@ -108,7 +108,7 @@ class Kasir
     public function detail($transaction_id)
     {
         $stmt = $this->conn->prepare(
-            "SELECT d.*, p.nama_produk
+            "SELECT d.*, p.nama_produk, p.foto
              FROM transaction_details d JOIN products p ON p.id = d.product_id
              WHERE d.transaction_id = ?"
         );
@@ -159,7 +159,7 @@ class Kasir
                 $harga = (float) $p['harga_jual'];
                 $sub = $harga * $qty;
                 $subtotal += $sub;
-                $baris[] = [$pid, $qty, $harga, $sub];
+                $baris[] = [$pid, $qty, $harga, $sub, (int) $p['stok']];
             }
 
             // 2) diskon: nominal rupiah atau persen, tidak boleh melebihi subtotal
@@ -199,7 +199,7 @@ class Kasir
             );
             $kurang = $this->conn->prepare("UPDATE products SET stok = stok - ? WHERE id = ? AND stok >= ?");
             foreach ($baris as $b) {
-                list($pid, $qty, $harga, $sub) = $b;
+                list($pid, $qty, $harga, $sub, $stokAwal) = $b;
                 $det->bind_param('iiidd', $tid, $pid, $qty, $harga, $sub);
                 $det->execute();
                 $kurang->bind_param('iii', $qty, $pid, $qty);
@@ -207,6 +207,7 @@ class Kasir
                 if ($kurang->affected_rows < 1) {
                     throw new mysqli_sql_exception('Stok tidak mencukupi.');
                 }
+                stokLogTulis($this->conn, $pid, $this->branch, 'penjualan', -$qty, $stokAwal, $stokAwal - $qty, $invoice);
             }
 
             $this->conn->commit();

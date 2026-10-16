@@ -16,14 +16,14 @@ if (!$cabang) {
 }
 
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-if (!in_array($page, ['dashboard', 'baru', 'riwayat', 'produk', 'struk'], true)) {
+if (!in_array($page, ['dashboard', 'baru', 'riwayat', 'produk', 'struk', 'shift', 'profil'], true)) {
     $page = 'dashboard';
 }
 
 // ---- Simpan transaksi baru (dipanggil lewat JavaScript dari halaman Transaksi Baru, balasannya JSON)
 if ($page === 'baru' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
-    if (!csrfValid(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+    if (!eposCsrfOk(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
         echo json_encode(['ok' => false, 'msg' => 'Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.']);
         exit;
     }
@@ -38,7 +38,7 @@ if ($page === 'baru' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ---- Ajukan void (kasir hanya mengajukan, manajer yang menyetujui)
 if ($page === 'riwayat' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrfValid(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+    if (!eposCsrfOk(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
         $_SESSION['flash'] = ['danger', 'Sesi kedaluwarsa. Coba lagi.'];
     } else {
         $ok = $ksr->ajukanVoid(isset($_POST['id']) ? (int) $_POST['id'] : 0);
@@ -48,6 +48,36 @@ if ($page === 'riwayat' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     redirect('riwayat');
 }
+
+// ---- Profil: simpan nama / ganti password
+if ($page === 'profil') {
+    profilProses();
+}
+
+// ---- Buka / tutup shift
+$dbShift = eposDb();
+if ($page === 'shift' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!eposCsrfOk(isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+        toastFlash('danger', 'Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.');
+    } else {
+        $galat = '';
+        if ((isset($_POST['aksi']) ? $_POST['aksi'] : '') === 'buka') {
+            if (shiftBuka($dbShift, $BRANCH_ID, $USER_ID, isset($_POST['kas']) ? $_POST['kas'] : '', $galat)) {
+                toastFlash('success', 'Shift dibuka. Selamat bekerja!');
+            } else {
+                toastFlash('danger', $galat);
+            }
+        } else {
+            if (shiftTutup($dbShift, $BRANCH_ID, $USER_ID, isset($_POST['kas']) ? $_POST['kas'] : '', isset($_POST['catatan']) ? $_POST['catatan'] : '', $galat)) {
+                toastFlash('success', 'Shift ditutup. Rekap sudah tersimpan untuk manajer.');
+            } else {
+                toastFlash('danger', $galat);
+            }
+        }
+    }
+    redirect('shift');
+}
+$shiftAktif = shiftAktif($dbShift, $USER_ID);
 
 // ---- Struk: halaman mandiri tanpa sidebar supaya bersih saat dicetak
 if ($page === 'struk') {
@@ -60,6 +90,8 @@ $judul = [
     'baru'      => ['Transaksi Baru', 'Pilih produk, atur potongan, lalu simpan'],
     'riwayat'   => ['Riwayat Transaksi', 'Transaksi yang kamu catat'],
     'produk'    => ['Produk & Stok', 'Harga jual dan stok di ' . $cabang['nama_cabang']],
+    'shift'     => ['Shift Kasir', 'Buka dan tutup shift, hitung kas'],
+    'profil'    => ['Profil Saya', 'Ubah nama dan ganti password akunmu'],
 ];
 ?>
 <!DOCTYPE html>
@@ -104,6 +136,12 @@ $judul = [
                     break;
                 case 'produk':
                     include 'pages/produk/produk.php';
+                    break;
+                case 'shift':
+                    include 'pages/shift.php';
+                    break;
+                case 'profil':
+                    include '../login/halaman/profil.php';
                     break;
             }
             ?>

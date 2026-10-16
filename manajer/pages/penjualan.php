@@ -16,6 +16,9 @@ foreach ($data as $r) {
         $diskon += $r['diskon'];
     }
 }
+$hal = halIni();
+$jml = count($data);
+$data = halPotong($data, $hal);
 ?>
 <div class="row">
     <div class="col-12">
@@ -43,9 +46,11 @@ foreach ($data as $r) {
                 <input type="text" name="cari" value="<?= e($cari) ?>" class="form-control" placeholder="INV-...">
             </div>
             <button class="btn btn-outline-secondary" type="submit"><i class="ti ti-filter"></i> Filter</button>
+            <a class="btn btn-outline-secondary" href="?<?= e(http_build_query(['page' => 'penjualan', 'dari' => $dari, 'sampai' => $sampai, 'kasir_id' => $kasir_id, 'cari' => $cari, 'unduh' => 'csv'])) ?>"><i class="ti ti-download"></i> Unduh CSV</a>
         </form>
 
-        <div class="card table-responsive">
+        <div class="card">
+        <div class="table-responsive">
             <table class="table mb-0 text-nowrap table-hover">
                 <thead class="table-light border-light">
                     <tr>
@@ -85,6 +90,8 @@ foreach ($data as $r) {
                     </tfoot>
                 <?php } ?>
             </table>
+        </div>
+        <?php halNav($jml, $hal); ?>
         </div>
     </div>
 </div>

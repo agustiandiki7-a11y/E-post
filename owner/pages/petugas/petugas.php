@@ -17,6 +17,9 @@ if (!in_array($role, ['kasir', 'manajer'])) {
 }
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
 $data = $petugas->semua($role, $cari);
+$hal = halIni();
+$jml = count($data);
+$data = halPotong($data, $hal);
 $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
 ?>
 <main id="content" class="content py-10">
@@ -47,7 +50,8 @@ $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
                     </select>
                     <button class="btn btn-outline-secondary" type="submit"><i class="ti ti-filter"></i> Filter</button>
                 </form>
-                <div class="card table-responsive">
+                <div class="card">
+                <div class="table-responsive">
                     <table class="table mb-0 text-nowrap table-hover">
                         <thead class="table-light border-light">
                             <tr>
@@ -63,7 +67,7 @@ $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
                             <?php if (!$data) { ?>
                                 <tr><td colspan="6" class="text-center text-secondary py-4">Belum ada user.</td></tr>
                             <?php } ?>
-                            <?php $no = 1; foreach ($data as $row) { ?>
+                            <?php $no = halMulai($hal); foreach ($data as $row) { ?>
                                 <tr class="align-middle">
                                     <td><?= $no++ ?></td>
                                     <td class="fw-semibold"><?= e($row['nama']) ?></td>
@@ -81,6 +85,8 @@ $warna = ['kasir' => 'bg-primary', 'manajer' => 'bg-info text-dark'];
                             <?php } ?>
                         </tbody>
                     </table>
+                </div>
+                <?php halNav($jml, $hal); ?>
                 </div>
             </div>
         </div>

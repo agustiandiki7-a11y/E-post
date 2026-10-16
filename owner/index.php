@@ -1,4 +1,34 @@
-<?php require_once 'function/guard.php'; ?>
+<?php
+require_once 'function/guard.php';
+
+// Aksi yang harus jalan sebelum ada output HTML: simpan profil, unduh CSV
+$halaman = isset($_GET['page']) ? $_GET['page'] : '';
+if ($halaman === 'profil') {
+    profilProses();
+}
+if (isset($_GET['unduh'])) {
+    if ($halaman === 'pembayaran') {
+        require_once 'function/pembayaran.php';
+        $dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-01'));
+        $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'));
+        $baris = [];
+        foreach ((new Pembayaran())->perCabangHari($dari, $sampai) as $r) {
+            $baris[] = [$r['tgl'], $r['nama_cabang'], (int) $r['jml_transaksi'], (float) $r['total_diskon'], (float) $r['total_penjualan']];
+        }
+        csvKirim('laporan-penjualan-' . $dari . '_' . $sampai . '.csv', ['Tanggal', 'Cabang', 'Transaksi', 'Diskon', 'Penjualan'], $baris);
+    }
+    if ($halaman === 'penyewaan') {
+        require_once 'function/penyewaan.php';
+        $dari = tglValid(isset($_GET['dari']) ? $_GET['dari'] : '', date('Y-m-01'));
+        $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'));
+        $baris = [];
+        foreach ((new Penyewaan())->semua(isset($_GET['branch_id']) ? (int) $_GET['branch_id'] : 0, $dari, $sampai, isset($_GET['cari']) ? trim($_GET['cari']) : '') as $r) {
+            $baris[] = [$r['invoice_number'], $r['tanggal'], $r['nama_cabang'], $r['nama_kasir'], (float) $r['diskon'], (float) $r['total_bayar'], $r['status']];
+        }
+        csvKirim('transaksi-' . $dari . '_' . $sampai . '.csv', ['Invoice', 'Tanggal', 'Cabang', 'Kasir', 'Diskon', 'Total', 'Status'], $baris);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,25 +45,14 @@
     <!-- SIDEBAR -->
     <?php include 'components/sidebar.php' ?>
 
-    <!-- MAIN CONTENT -->
-    <!-- untuk menamnpilkkan hanya di bagian content saja -->
+    <!-- MAIN CONTENT: halaman dipilih lewat ?page=... -->
     <?php
-    $page = isset($_GET['page']) ? $_GET['page'] : "dashboard";
+    $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
     switch ($page) {
-        // untuk meberi nama halaman yg akan di buka
-        // punya Dashboard
         case 'dashboard':
-            // mau di isi dengan pages apa
-            include 'pages/dashboard.php';
-            // biar berenti agar gamasuk ke halaman sebelahnya
-            // otomatis pindah halaman selanjutnya
-            break;
-        // untuk mengarahkan halam awal yg akan di buka
-        case 'pages/dashboard.php':
             include 'pages/dashboard.php';
             break;
-        default:
-            //   kategori
+        // kategori (= master cabang)
         case 'kategori':
             include 'pages/kategori/kategori.php';
             break;
@@ -55,8 +74,14 @@
         case 'penyewaan':
             include 'pages/penyewaan/penyewa.php';
             break;
-        case 'peminjaman':
-            include 'pages/peminjam/peminjam.php';
+        case 'profil':
+            include 'pages/profil/profil.php';
+            break;
+        case 'restock':
+            include 'pages/stok/restock.php';
+            break;
+        case 'riwayatStok':
+            include 'pages/stok/riwayat.php';
             break;
         // KENDARAAN (produk) - tambah & ubah
         case 'tambahKendaraan':
@@ -79,6 +104,9 @@
         case 'updatePetugas':
             include 'pages/petugas/update.php';
             break;
+        // halaman yang tidak dikenal -> kembali ke dashboard
+        default:
+            include 'pages/dashboard.php';
     }
     ?>
     <!-- MAIN CONTENT -->

@@ -1,6 +1,6 @@
 <aside id="sidebar" class="sidebar">
     <div class="logo-area">
-        <a href="index.php?page=dashboard" class="d-inline-flex"><img src="template/src/assets/images/logo-icon.svg" alt="" width="24">
+        <a href="index.php?page=dashboard" class="d-inline-flex"><img src="../assets/template/src/assets/images/logo-icon.svg" alt="" width="24">
             <span class="logo-text ms-2 fw-bold fs-5">Nexora POS</span>
         </a>
     </div>
@@ -14,8 +14,12 @@
                     class="nav-text">Riwayat Transaksi</span></a></li>
         <li><a class="nav-link <?= $page == 'produk' ? 'active' : '' ?>" href="index.php?page=produk"><i class="ti ti-box-seam"></i><span
                     class="nav-text">Produk &amp; Stok</span></a></li>
+        <li><a class="nav-link <?= $page == 'shift' ? 'active' : '' ?>" href="index.php?page=shift"><i class="ti ti-clock"></i><span
+                    class="nav-text">Shift Kasir</span>
+                <?php if (empty($shiftAktif)) { ?><span class="badge bg-warning text-dark ms-auto nav-text">Tutup</span><?php } else { ?><span class="badge bg-success ms-auto nav-text">Buka</span><?php } ?></a></li>
 
         <li class="px-4 pt-4 pb-2"><small class="nav-text">Akun</small></li>
+        <li><a class="nav-link <?= $page == 'profil' ? 'active' : '' ?>" href="index.php?page=profil"><i class="ti ti-user"></i><span class="nav-text">Profil</span></a></li>
         <li><a class="nav-link" href="../login/logout.php"><i class="ti ti-logout"></i><span class="nav-text">Logout</span></a></li>
     </ul>
 </aside>

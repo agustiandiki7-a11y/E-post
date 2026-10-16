@@ -9,6 +9,9 @@ $sampai = tglValid(isset($_GET['sampai']) ? $_GET['sampai'] : '', date('Y-m-d'))
 $ringkas = $lap->ringkasan($dari, $sampai);
 $cabang = $lap->perCabang($dari, $sampai);
 $harian = $lap->perHari($dari, $sampai);
+$hal = halIni();
+$jml = count($harian);
+$harian = halPotong($harian, $hal);
 $terlaris = $lap->produkTerlaris($dari, $sampai, 5);
 $omzetMax = 0;
 foreach ($cabang as $c) {
@@ -136,6 +139,7 @@ foreach ($cabang as $c) {
                             </tbody>
                         </table>
                     </div>
+                    <?php halNav($jml, $hal); ?>
                 </div>
             </div>
         </div>

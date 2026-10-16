@@ -1,0 +1,11 @@
+# Foto upload: jangan jalankan skrip apa pun di sini
+<FilesMatch "(?i)\.(php|phtml|phar|pl|py|cgi|sh|shtml)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>

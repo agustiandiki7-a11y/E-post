@@ -33,7 +33,7 @@
                     <ul class="list-unstyled p-0 m-0">
                         <li class="p-3 border-bottom ">
                             <div class="d-flex gap-3">
-                                <img src="template/src/assets/images/avatar/avatar-1.jpg" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="../assets/template/src/assets/images/avatar/avatar-1.jpg" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">New order received</p>
                                     <p class="mb-1">Order #12345 has been placed</p>
@@ -43,7 +43,7 @@
                         </li>
                         <li class="p-3 border-bottom ">
                             <div class="d-flex gap-3">
-                                <img src="template/src/assets/images/avatar/avatar-4.jpg" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="../assets/template/src/assets/images/avatar/avatar-4.jpg" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">New user registered</p>
                                     <p class="mb-1">User @john_doe has signed up</p>
@@ -53,7 +53,7 @@
 
                         <li class="p-3 border-bottom">
                             <div class="d-flex gap-3">
-                                <img src="template/src/assets/images/avatar/avatar-2.jpg" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="../assets/template/src/assets/images/avatar/avatar-2.jpg" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">Payment confirmed</p>
                                     <p class="mb-1">Payment of $299 has been received</p>
@@ -84,6 +84,7 @@
                         </div>
                         <div class="p-3 d-flex flex-column gap-1 small lh-lg">
                             <a href="index.php?page=dashboard"><span>Dashboard</span></a>
+                            <a href="index.php?page=profil"><span>Profil &amp; Password</span></a>
                             <a href="../login/logout.php" class="text-danger"><span>Logout</span></a>
                         </div>
 

@@ -14,7 +14,8 @@ config.local.php
 *.bak
 cache/
 tmp/
-uploads/
+uploads/*
+!uploads/.htaccess
 
 # Dump database & arsip
 *.zip

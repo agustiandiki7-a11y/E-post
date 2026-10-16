@@ -1,7 +1,7 @@
   <?php $menu = isset($_GET['page']) ? $_GET['page'] : 'dashboard'; ?>
   <aside id="sidebar" class="sidebar">
       <div class="logo-area">
-          <a href="index.php?page=dashboard" class="d-inline-flex"><img src="template/src/assets/images/logo-icon.svg" alt="" width="24">
+          <a href="index.php?page=dashboard" class="d-inline-flex"><img src="../assets/template/src/assets/images/logo-icon.svg" alt="" width="24">
               <span class="logo-text ms-2 fw-bold fs-5">Nexora POS</span>
           </a>
       </div>
@@ -15,6 +15,7 @@
           <li><a class="nav-link <?= in_array($menu, ['kendaraan', 'tambahKendaraan', 'updateKendaraan']) ? 'active' : '' ?>" href="index.php?page=kendaraan"><i class="ti ti-box-seam"></i>
                   <span class="nav-text">Produk &amp; Harga</span></a></li>
           <li><a class="nav-link <?= in_array($menu, ['petugas', 'tambahPetugas', 'updatePetugas']) ? 'active' : '' ?>" href="index.php?page=petugas"><i class="ti ti-users"></i><span class="nav-text">User</span></a></li>
+          <li><a class="nav-link <?= in_array($menu, ['restock', 'riwayatStok']) ? 'active' : '' ?>" href="index.php?page=riwayatStok"><i class="ti ti-history"></i><span class="nav-text">Riwayat Stok</span></a></li>
           <li class="px-4 pt-3 pb-2"><small class="nav-text">Penjualan</small></li>
           <li><a class="nav-link <?= in_array($menu, ['penyewaan', 'detailTransaksi']) ? 'active' : '' ?>" href="index.php?page=penyewaan"><i class="ti ti-receipt"></i><span class="nav-text">Transaksi</span></a>
           </li>
@@ -22,6 +23,7 @@
           </li>
 
           <li class="px-4 pt-4 pb-2"><small class="nav-text">Akun</small></li>
+          <li><a class="nav-link <?= $menu == 'profil' ? 'active' : '' ?>" href="index.php?page=profil"><i class="ti ti-user"></i><span class="nav-text">Profil</span></a></li>
           <li><a class="nav-link" href="../login/logout.php"><i class="ti ti-logout"></i><span class="nav-text">Logout</span></a>
           </li>
       </ul>
